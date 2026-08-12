@@ -1,0 +1,43 @@
+{% extends "admin/base.html" %}
+
+{% block title %}{% if subtitle %}{{ subtitle }} | {% endif %}{{ title }} | {{ site_title|default:_('Django site admin') }}{% endblock %}
+
+{% block branding %}
+<h1 id="site-name"><a href="{% url 'admin:index' %}">{{ site_header|default:_('Django administration') }}</a></h1>
+{% if user.is_anonymous %}
+  {% include "admin/color_theme_toggle.html" %}
+{% endif %}
+{% endblock %}
+
+{% block nav-global %}{% endblock %}
+
+{% block extrastyle %}
+  <style>
+    /* html[data-theme="light"],
+    :root{
+      --primary: #870004;
+      --secondary: #13452c;
+      --accent: #c5c5c5;
+      --breadcrumbs-bg: #1a2e1a;
+      --button-hover-bg: #1a2e1a;
+      --default-button-hover-bg: #1a2e1a;
+      --default-button-bg: var(--secondary);
+    } */
+    /* html[data-theme="dark"]{
+      --primary: #1a2e1a;
+    } */
+    .django-ckeditor-widget{
+      width: 100%;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+<h1>{{ title }}</h1>
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="default">Импортировать</button>
+</form>
+{% endblock %}

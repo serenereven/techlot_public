@@ -1,0 +1,58 @@
+{% if variant == "top" %}
+    <div class="uk-flex uk-flex-between uk-flex-middle">
+        <div class="header-contacts uk-grid-small" uk-grid>
+            {% for con in contacts %}
+                <div>
+                    <a class="uk-link-text uk-text-small" href="{{ con.link }}">
+                        <span class="uk-margin-xsmall-right" uk-icon="icon: {{ con.contact_type }}"></span>
+                        <span>{{ con.value }}</span>
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="header-socials uk-flex uk-flex-middle uk-flex-right">
+            {% for soc in socials %}
+                <a class="uk-icon-button uk-margin-small-left uk-text-primary"
+                   href="{{ soc.link }}"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   title="{{ soc.title }}"
+                   uk-icon="icon: {{ soc.contact_type }}; ratio: 1.1">
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+
+{% elif variant == "mobile" %}
+    <div class="uk-margin-small">
+        {# <div class="uk-text-small uk-text-muted uk-margin-small-bottom">Контакты</div> #}
+
+        <div class="uk-grid-small uk-child-width-1-1" uk-grid>
+            {% for con in contacts %}
+                <div>
+                    <a class="uk-link-muted" href="{{ con.link }}">
+                        <span class="uk-margin-xsmall-right" uk-icon="icon: {{ con.contact_type }}"></span>
+                        <span>{{ con.value }}</span>
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="uk-margin-small-top">
+        {# <div class="uk-text-small uk-text-muted uk-margin-small-bottom">Мы в соцсетях</div> #}
+
+        <div class="uk-flex uk-flex-left">
+            {% for soc in socials %}
+                <a class="uk-icon-button uk-margin-xsmall-right"
+                   href="{{ soc.link }}"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   title="{{ soc.title }}"
+                   uk-icon="icon: {{ soc.contact_type }}; ratio: 1.1">
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+{% endif %}

@@ -1,0 +1,312 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block content %}
+<section class="uk-section">
+  <div class="uk-container">
+
+    <ul class="uk-breadcrumb uk-margin-small-bottom">
+      <li><a href="{% url 'core:catalog' %}">Каталог</a></li>
+      <li><span>{{ vehicle.brand.name }} {{ vehicle.model.name }}</span></li>
+    </ul>
+
+    <header class="uk-margin-medium-bottom">
+      <h1 class="uk-margin-remove">{{ vehicle.title|default:vehicle }}</h1>
+      <p class="uk-text-muted uk-margin-small-top">
+        {{ vehicle.city.name }} · {{ vehicle.year }} · {{ vehicle.get_vehicle_type_display }}
+      </p>
+    </header>
+
+    <div class="uk-grid-large" uk-grid>
+      {# Левая колонка: Фото + описание #}
+      <div class="uk-width-1-1 uk-width-3-5@m">
+        <div class="vehicle-gallery uk-card uk-card-default uk-card-body uk-padding-remove">
+          <div uk-slideshow="ratio: 16:10; animation: fade">
+            <div class="uk-position-relative uk-visible-toggle" tabindex="-1">
+              <div uk-lightbox>
+                <ul class="uk-slideshow-items">
+                  {% if vehicle.gallery %}
+                  {% for photo in vehicle.gallery %}
+                  <li>
+                    <a class="uk-inline uk-display-block" href="{{ photo.image.url }}">
+                      <img src="{{ photo.image.url }}" alt="{{ vehicle }}" uk-cover>
+                    </a>
+                  </li>
+                  {% endfor %}
+                  {% elif vehicle.main_photo %}
+                  <li>
+                    <a class="uk-inline uk-display-block" href="{{ vehicle.main_photo.url }}">
+                      <img src="{{ vehicle.main_photo.url }}" alt="{{ vehicle }}" uk-cover>
+                    </a>
+                  </li>
+                  {% else %}
+                  <li>
+                    <div class="uk-flex uk-flex-center uk-flex-middle uk-height-medium uk-background-muted">
+                      <div class="uk-text-muted uk-text-center">
+                        <span uk-icon="icon: image; ratio: 2"></span>
+                        <div class="uk-margin-small-top">Фото отсутствуют</div>
+                      </div>
+                    </div>
+                  </li>
+                  {% endif %}
+                </ul>
+              </div>
+              <a class="uk-position-center-left uk-position-small uk-hidden-hover uk-background-muted uk-border-circle" href="#" uk-slidenav-previous
+                uk-slideshow-item="previous"></a>
+              <a class="uk-position-center-right uk-position-small uk-hidden-hover uk-background-muted uk-border-circle" href="#" uk-slidenav-next
+                uk-slideshow-item="next"></a>
+            </div>
+            {% if vehicle.gallery %}
+            <div class="uk-padding-small uk-padding-remove-top uk-margin-xsmall-top">
+              <ul class="uk-thumbnav uk-flex-center uk-margin-remove-top">
+                {% for photo in vehicle.gallery %}
+                <li uk-slideshow-item="{{ forloop.counter0 }}">
+                  <a class="uk-margin-xsmall-bottom" href="#">
+                    <img src="{{ photo.image.url }}" alt="{{ vehicle }}"
+                      style="width: 80px; height: 50px; object-fit: cover;">
+                  </a>
+                </li>
+                {% endfor %}
+              </ul>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      {# Правая колонка #}
+      <div class="uk-width-1-1 uk-width-2-5@m">
+
+        <div class="uk-card uk-card-default uk-card-body uk-margin-bottom">
+          <h3 class="uk-card-title uk-margin-remove">Основные характеристики</h3>
+          <ul class="uk-list uk-list-divider uk-margin-top">
+            {% if vehicle.price_rub %}
+            <li class="uk-flex uk-flex-between uk-flex-middle">
+              <span class="uk-text-muted">Цена</span>
+              <span class="uk-text-bold">{{ vehicle.price_rub|intcomma }} ₽</span>
+            </li>
+            {% endif %}
+            <li class="uk-flex uk-flex-between uk-flex-middle">
+              <span class="uk-text-muted">Марка / Модель</span>
+              <span class="uk-text-right">{{ vehicle.brand.name }} {{ vehicle.model.name }}</span>
+            </li>
+            <li class="uk-flex uk-flex-between uk-flex-middle">
+              <span class="uk-text-muted">Год</span>
+              <span>{{ vehicle.year }}</span>
+            </li>
+            {% if vehicle.mileage_km %}
+            <li class="uk-flex uk-flex-between uk-flex-middle">
+              <span class="uk-text-muted">Пробег</span>
+              <span>{{ vehicle.mileage_km|intcomma }} км</span>
+            </li>
+            {% endif %}
+          </ul>
+          <a class="uk-link-muted uk-display-inline-block uk-margin-small-top" href="#all-specs" uk-scroll>
+            Все характеристики
+            <span uk-icon="icon: chevron-down; ratio: 0.8"></span>
+          </a>
+          <a class="uk-border-rounded uk-button uk-button-default uk-width-1-1 uk-margin-small-top" href="{% url 'core:catalog' %}">
+            <span uk-icon="icon: arrow-left; ratio: 0.8"></span>
+            Назад в каталог
+          </a>
+          {% if vehicle.city.maps_code %}
+          <a class="uk-border-rounded uk-button uk-button-secondary uk-width-1-1 uk-margin-small-top" href="#vehicle_map">
+            <span uk-icon="icon: location; ratio: 1"></span>
+            Показать на карте
+          </a>
+          {% endif %}
+        </div>
+
+        <div class="uk-card uk-card-default uk-card-body uk-flex uk-flex-column uk-flex-middle uk-flex-center">
+          {% if conact_phone %}
+          <a class="uk-border-rounded contact-button uk-button uk-button-default uk-margin-small-bottom uk-width-1-1" href="{{ conact_phone.link }}">
+              <span class="uk-margin-xsmall-right" uk-icon="icon: {{ conact_phone.contact_type }}"></span>
+              <span>{{ conact_phone.value }}</span>
+          </a>
+          {% endif %}
+          {% if vehicle.stock_status == "sold" %}
+          <button class="uk-border-rounded uk-button uk-button-primary uk-width-1-1 uk-margin-small-top" disabled>Оставить заявку на покупку</button>
+          <button class="uk-border-rounded uk-button uk-button-primary uk-width-1-1 uk-margin-small-top" disabled>Оставить заявку на лизинг</button>
+          <i class="uk-margin-small-top uk-text-meta uk-text-center uk-width-1-1">Продано</i>
+          {% else %}
+          <a class="uk-border-rounded uk-button uk-button-primary uk-width-1-1" 
+            href="#purchase-modal" uk-toggle
+            data-request-type="purchase" data-purchase-open 
+            data-vehicle-id="{{ vehicle.pk }}" data-vehicle-title="{{ vehicle.title }}">
+            Оставить заявку на покупку
+          </a>
+          <a class="uk-border-rounded uk-button uk-button-primary uk-width-1-1 uk-margin-small-top" 
+            href="#purchase-modal" uk-toggle 
+            data-request-type="leasing" data-purchase-open 
+            data-vehicle-id="{{ vehicle.pk }}" data-vehicle-title="{{ vehicle.title }}">
+            Оставить заявку на лизинг
+          </a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    {% if vehicle.content %}
+    <div id="description" class="uk-margin-large-top">
+      <h3 class="uk-heading-bullet">Описание состояния</h3>
+      <div class="uk-article uk-margin-small-top">
+        {{ vehicle.content|safe }}
+      </div>
+    </div>
+    {% endif %}
+    {# Все характеристики #}
+    <div id="all-specs" class="uk-margin-large-top">
+      <h3 class="uk-heading-bullet">Все характеристики</h3>
+      <div class="uk-card uk-card-default uk-card-body">
+        {% if vehicle.city and vehicle.city.name %}
+        <div class="uk-flex uk-flex-top">
+          <span class="uk-text-muted uk-flex-none uk-margin-small-right">Город</span>
+          {# max-width можно подогнать под ваш дизайн #}
+          <span class="uk-margin-auto-left uk-text-right uk-text-break" style="max-width: 620px;">
+            {{ vehicle.city.name }}
+          </span>
+        </div>
+        <hr class="uk-margin-small">
+        {% endif %}
+        <div class="uk-grid-small uk-grid-divider" uk-grid>
+          <div class="uk-width-1-2@m">
+            <ul class="uk-list uk-list-divider uk-margin-remove">
+              {% if vehicle.price_rub %}
+              <li class="uk-flex uk-flex-top">
+                <span class="uk-text-muted uk-flex-none uk-margin-small-right">Цена</span>
+                <span class="uk-margin-auto-left uk-text-right uk-text-break uk-text-bold">
+                  {{ vehicle.price_rub|intcomma }} ₽
+                </span>
+              </li>
+              {% endif %}
+              {% if vehicle.get_stock_status_display %}
+              <li class="uk-flex uk-flex-top">
+                <span class="uk-text-muted uk-flex-none uk-margin-small-right">Статус</span>
+                <span class="uk-margin-auto-left uk-text-right uk-text-break">
+                  {{ vehicle.get_stock_status_display }}
+                </span>
+              </li>
+              {% endif %}
+              {% if vehicle.get_vehicle_type_display %}
+              <li class="uk-flex uk-flex-top">
+                <span class="uk-text-muted uk-flex-none uk-margin-small-right">Тип техники</span>
+                <span class="uk-margin-auto-left uk-text-right uk-text-break">
+                  {{ vehicle.get_vehicle_type_display }}
+                </span>
+              </li>
+              {% endif %}
+              {% if vehicle.brand %}
+              <li class="uk-flex uk-flex-top">
+                <span class="uk-text-muted uk-flex-none uk-margin-small-right">Марка</span>
+                <span class="uk-margin-auto-left uk-text-right uk-text-break">
+                  {{ vehicle.brand.name }}
+                </span>
+              </li>
+              {% endif %}
+              {% if vehicle.model %}
+              <li class="uk-flex uk-flex-top">
+                <span class="uk-text-muted uk-flex-none uk-margin-small-right">Модель</span>
+                <span class="uk-margin-auto-left uk-text-right uk-text-break">
+                  {{ vehicle.model.name }}
+                </span>
+              </li>
+              {% endif %}
+              {% if vehicle.year %}
+              <li class="uk-flex uk-flex-top">
+                <span class="uk-text-muted uk-flex-none uk-margin-small-right">Год выпуска</span>
+                <span class="uk-margin-auto-left uk-text-right uk-text-break">
+                  {{ vehicle.year }}
+                </span>
+              </li>
+              {% endif %}
+            </ul>
+          </div>
+          <div class="uk-width-1-2@m">
+            <ul class="uk-list uk-list-divider uk-margin-remove">
+              {% if vehicle.mileage_km %}
+              <li class="uk-flex uk-flex-top">
+                <span class="uk-text-muted uk-flex-none uk-margin-small-right">Пробег</span>
+                <span class="uk-margin-auto-left uk-text-right uk-text-break">
+                  {{ vehicle.mileage_km|intcomma }} км
+                </span>
+              </li>
+              {% endif %}
+              {% if vehicle.get_engine_type_display %}
+              <li class="uk-flex uk-flex-top">
+                <span class="uk-text-muted uk-flex-none uk-margin-small-right">Тип двигателя</span>
+                <span class="uk-margin-auto-left uk-text-right uk-text-break">
+                  {{ vehicle.get_engine_type_display }}
+                </span>
+              </li>
+              {% endif %}
+              {% if vehicle.engine_power_hp %}
+              <li class="uk-flex uk-flex-top">
+                <span class="uk-text-muted uk-flex-none uk-margin-small-right">Мощность</span>
+                <span class="uk-margin-auto-left uk-text-right uk-text-break">
+                  {{ vehicle.engine_power_hp|floatformat }} л.с.
+                </span>
+              </li>
+              {% endif %}
+              {% if vehicle.get_transmission_display %}
+              <li class="uk-flex uk-flex-top">
+                <span class="uk-text-muted uk-flex-none uk-margin-small-right">Коробка передач</span>
+                <span class="uk-margin-auto-left uk-text-right uk-text-break">
+                  {{ vehicle.get_transmission_display }}
+                </span>
+              </li>
+              {% endif %}
+              {% if vehicle.wheel_formula %}
+              <li class="uk-flex uk-flex-top">
+                <span class="uk-text-muted uk-flex-none uk-margin-small-right">Колёсная формула</span>
+                <span class="uk-margin-auto-left uk-text-right uk-text-break">
+                  {{ vehicle.wheel_formula }}
+                </span>
+              </li>
+              {% endif %}
+              {% if vehicle.get_technical_condition_display %}
+              <li class="uk-flex uk-flex-top">
+                <span class="uk-text-muted uk-flex-none uk-margin-small-right">Тех. состояние</span>
+                <span class="uk-margin-auto-left uk-text-right uk-text-break">
+                  {{ vehicle.get_technical_condition_display }}
+                </span>
+              </li>
+              {% endif %}
+              {% if vehicle.color %}
+              <li class="uk-flex uk-flex-top">
+                <span class="uk-text-muted uk-flex-none uk-margin-small-right">Цвет</span>
+                <span class="uk-margin-auto-left uk-text-right uk-text-break">
+                  {{ vehicle.color }}
+                </span>
+              </li>
+              {% endif %}
+              {% if vehicle.vin %}
+              <li class="uk-flex uk-flex-top">
+                <span class="uk-text-muted uk-flex-none uk-margin-small-right">VIN</span>
+                <span class="uk-margin-auto-left uk-text-right uk-text-break">
+                  {{ vehicle.vin }}
+                </span>
+              </li>
+              {% endif %}
+              {% if vehicle.technical_condition %}
+              <li class="uk-flex uk-flex-top">
+                <span class="uk-text-muted uk-flex-none uk-margin-small-right">Техническое состояние</span>
+                <span class="uk-margin-auto-left uk-text-right uk-text-break">
+                  {{ vehicle.technical_condition }}
+                </span>
+              </li>
+              {% endif %}
+            </ul>
+          </div>
+        </div>
+      </div>
+      {% if vehicle.city.maps_code %}
+      <div id="vehicle_map">
+        <h3 class="uk-heading-bullet uk-margin-medium-top">Местоположение на карте</h3>
+        <div class="uk-card uk-card-default uk-margin-medium-top">
+          {{ vehicle.city.maps_code|safe }}
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endblock %}

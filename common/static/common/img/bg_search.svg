@@ -1,0 +1,24 @@
+<svg viewBox="0 0 1366 490" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1366.000000" height="490.000000" fill="none">
+	<defs>
+		<g id="pixso_custom_effect_1">
+			<effect visibility="visible" effectType="gaussianBlur" stdDeviation="200" />
+		</g>
+		<filter id="filter_1" width="1404.000000" height="504.000000" x="-19.000000" y="-7.000000" filterUnits="userSpaceOnUse" customEffect="url(#pixso_custom_effect_1)" color-interpolation-filters="sRGB">
+			<feFlood flood-opacity="0" result="BackgroundImageFix" />
+			<feBlend result="shape" in="SourceGraphic" in2="BackgroundImageFix" mode="normal" />
+			<feGaussianBlur stdDeviation="66.6666641" result="effect_layerBlur_1" />
+		</filter>
+		<clipPath id="clipPath_0">
+			<rect width="1004.000000" height="104.000000" x="181.000000" y="193.000000" fill="rgb(255,255,255)" />
+		</clipPath>
+		<linearGradient id="paint_linear_1" x1="181" x2="1184.99988" y1="244.625885" y2="244.625885" gradientUnits="userSpaceOnUse">
+			<stop stop-color="rgb(33,170,108)" offset="0" stop-opacity="1" />
+			<stop stop-color="rgb(0,135,205)" offset="1" stop-opacity="1" />
+		</linearGradient>
+	</defs>
+	<rect id="1328961328967291" width="1366.000000" height="490.000000" x="0.000000" y="0.000000" />
+	<g id="1328961328967291" filter="url(#filter_1)" customFrame="url(#clipPath_0)">
+		<rect id="1328961328967291" width="1004.000000" height="104.000000" x="181.000000" y="193.000000" />
+		<rect id="Прямоугольник 2" width="1004.000000" height="104.000000" x="181.000000" y="193.000000" rx="52.000000" fill="url(#paint_linear_1)" />
+	</g>
+</svg>
