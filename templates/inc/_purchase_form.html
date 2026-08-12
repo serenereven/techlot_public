@@ -1,0 +1,52 @@
+<form id="purchase-form" class="uk-form-stacked" method="post" action="{% url 'core:purchase_request_ajax' %}">
+  {% csrf_token %}
+  <input type="hidden" name="request_type" id="purchase-request-type" value="purchase">
+  <input type="hidden" name="vehicle_id" id="purchase-vehicle-id" value="{{ vehicle.id|default:'' }}">
+  <input type="hidden" name="vehicle_title" id="purchase-vehicle-title" value="{{ vehicle.title|default:'' }}">
+  <div class="uk-margin">
+    <div class="uk-text-small uk-text-muted">Автомобиль:</div>
+    <div id="purchase-vehicle-title-view" class="uk-text-bold">
+      {{ vehicle.title|default:"Не выбрано" }}
+    </div>
+  </div>
+  <div class="uk-margin">
+    <label class="uk-form-label" for="purchase-name">Имя</label>
+    <div class="uk-form-controls">
+      <input class="uk-input uk-border-rounded" id="purchase-name" name="name" type="text" required autocomplete="name">
+      <div class="uk-text-danger uk-text-small uk-margin-small-top" data-error-for="name"></div>
+    </div>
+  </div>
+  <div class="uk-margin">
+    <label class="uk-form-label" for="purchase-phone">Телефон</label>
+    <div class="uk-form-controls">
+      <input class="uk-input uk-border-rounded" id="purchase-phone" name="phone" type="tel" required placeholder="8 000-000-00-00" autocomplete="tel">
+      <div class="uk-text-danger uk-text-small uk-margin-small-top" data-error-for="phone"></div>
+    </div>
+  </div>
+  <div class="uk-margin" id="inn-wrapper" style="display:none;">
+    <label class="uk-form-label" for="purchase-inn">ИНН</label>
+    <div class="uk-form-controls">
+      <input class="uk-input uk-border-rounded" id="purchase-inn" name="inn" type="text" placeholder="10 или 12 цифр">
+      <div class="uk-text-danger uk-text-small uk-margin-small-top" data-error-for="inn"></div>
+    </div>
+  </div>
+  <div class="form-privacy uk-text-small uk-text-muted uk-margin-small-top">
+    <label class="uk-form-label">
+      <input type="checkbox" name="privacy" id="privacy" class="uk-checkbox" required>
+      <span class="uk-margin-small-left">
+        Я даю согласие на обработку моих персональных данных в соответствии с
+        <a href="/privacy" class="privacy-link">Политикой конфиденциальности</a>
+      </span>
+    </label>
+  </div>
+  <div class="uk-margin">
+    <button type="submit" class="uk-border-rounded uk-button uk-button-primary uk-width-1-1">
+      Оставить заявку на покупку
+    </button>
+  </div>
+</form>
+
+<div id="purchase-success" class="uk-alert-success uk-margin" uk-alert style="display:none;">
+  <a class="uk-alert-close" uk-close></a>
+  <div></div>
+</div>

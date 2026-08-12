@@ -1,0 +1,13 @@
+<li {% if request.path == '/' %}class="uk-active"{% endif %}>
+    <a href="/">Главная</a>
+</li>
+
+<li {% if request.resolver_match.url_name == 'catalog' %}class="uk-active"{% endif %}>
+    <a href="{% url 'core:catalog' %}">Каталог</a>
+</li>
+
+{% for page in pages_menu %}
+    <li {% if request.resolver_match.url_name == page.slug %}class="uk-active"{% endif %}>
+        <a href="{% url 'core:basic_page' slug=page.slug %}">{{ page.title }}</a>
+    </li>
+{% endfor %}

@@ -1,0 +1,48 @@
+services:
+  web:
+    build: .
+    container_name: techlot_web
+    command: gunicorn techlot.wsgi:application --bind 0.0.0.0:8000
+    ports:
+      - "127.0.0.1:8000:8000"
+    env_file:
+      - .env
+    environment:
+      - RUN_ENTRYPOINT=1
+      - PYTHONPATH=/app:/app/techlot
+    restart: always
+    depends_on:
+      - db
+      - redis
+    volumes:
+      - ./staticfiles:/app/staticfiles
+      - ./media:/app/media
+
+  celery:
+    build: .
+    container_name: techlot_celery
+    command: python -m celery -A celery_app worker -l info -Q bitrix --concurrency 2
+    environment:
+      - PYTHONPATH=/app:/app/techlot
+    env_file:
+      - .env
+    restart: always
+    depends_on:
+      - db
+      - redis
+    volumes:
+      - ./media:/app/media
+
+  redis:
+    image: redis:7-alpine
+    container_name: techlot_redis
+    restart: always
+
+  db:
+    image: postgres:16
+    container_name: techlot_db
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data

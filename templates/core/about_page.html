@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}{{ page.title }}{% endblock %}
+{% block content %}
+<div class="uk-container">
+    <h1 class="uk-text-center uk-margin-top uk-margin-large-bottom">{{ page.title }}</h1>
+    <div class="uk-grid" uk-grid>
+        <div class="uk-width-1-2@m">
+            <div class="uk-card uk-card-primary uk-card-body uk-border-rounded">
+                <h3 class="uk-heading-line uk-text-bold"><span>Контакты</span></h3>
+                <div class="uk-margin-small-bottom">
+                    {% for con in contacts %}
+                        <div class="uk-margin-small-bottom">
+                            <a class="uk-text-small uk-flex uk-flex-middle" href="{{ con.link }}">
+                                <span class="uk-margin-small-right" uk-icon="icon: {{ con.contact_type }}"></span>
+                                <span>{{ con.value }}</span>
+                            </a>
+                        </div>
+                    {% endfor %}
+                </div>
+                {% if socials %}
+                    <div class="uk-margin-top">
+                        <p class="uk-text-small uk-text-bold uk-margin-small-bottom">Мы в социальных сетях:</p>
+                        <div class="uk-flex uk-flex-left">
+                            {% for soc in socials %}
+                                <a class="uk-icon-button uk-margin-small-right" 
+                                   href="{{ soc.link }}" 
+                                   target="_blank" 
+                                   title="{{ soc.title }}"
+                                   uk-icon="icon: {{ soc.contact_type }}; ratio: 1.2">
+                                </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+            <div class="uk-card uk-card-primary uk-card-body uk-border-rounded uk-margin-top">
+                <h3 class="uk-heading-line uk-text-bold"><span>Мы на карте</span></h3>
+                 <div id="map" class="uk-flex uk-flex-center uk-flex-middle uk-background-muted uk-width-1-1" style="height: 300px">
+                    <script type="text/javascript" charset="utf-8" async src="https://api-maps.yandex.ru/services/constructor/1.0/js/?um=constructor%3Ac9744eab6057da5bf349e45f2249859b1e9917b431a7bb9de11c2f610ab45c3f&amp;width=100%25&amp;height=300&amp;lang=ru_RU&amp;scroll=true"></script>
+                 </div>
+                 {% comment %} <i class="uk-text-small uk-text-muted uk-text-center uk-margin-small-top">Карта скоро появится</i> {% endcomment %}
+            </div>
+
+        </div>
+        <div class="uk-width-1-2@m">
+            <div class="uk-card uk-card-primary uk-card-body uk-border-rounded">
+                <h3 class="uk-heading-line uk-text-bold"><span>{{ page.title }}</span></h3>
+                <div class="">
+                    {{ page.content|safe }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

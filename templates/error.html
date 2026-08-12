@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block title %}Ошибка{% endblock %}
+
+{% block content %}
+<div class="error-page">
+    <h1>Ошибка</h1>
+    <a href="{% url "core:index" %}">Вернуться на главную</a>
+</div>
+{% endblock %}
+    

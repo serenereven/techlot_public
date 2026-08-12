@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="ru">
+<head>
+    <title>{% block meta_title %}Techlot{% endblock %}</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="{% static 'common/favicon.ico' %}" type="image/x-icon">
+    <link rel="stylesheet" href="{% static 'common/css/uikit.min.css' %}" />
+    <link rel="stylesheet" href="{% static 'common/css/style.css' %}"> 
+    <link rel="stylesheet" href="{% static 'common/fonts/SourceSansPro/font.css' %}">
+    {% block extra_css %}{% endblock %}
+    <script src="{% static 'common/js/uikit.min.js' %}"></script>
+    <script src="{% static 'common/js/uikit-icons.min.js' %}"></script>
+    <!-- UIS -->
+    <script type="text/javascript" async src="https://app.uiscom.ru/static/cs.min.js?k=3gi4KmGQvL7UqMBV5OH4dvwnN60sRFCB"></script>
+    <!-- UIS -->
+</head>
+<body>
+<header class="header" uk-sticky="start: 120;animation: uk-animation-slide-top">
+    <div class="header-top uk-visible@m background-accent">
+        <div class="uk-container">
+            {% include "inc/_contacts_socials.html" with variant="top" %}
+        </div>
+    </div>
+    <nav class="uk-navbar-container">
+        <div class="uk-container" uk-navbar>
+            <div class="uk-navbar-left">
+                <a href="/" class="uk-navbar-item uk-logo" aria-label="На главную">
+                    <span>Techlot</span>
+                </a>
+            </div>
+            <div class="uk-navbar-left uk-visible@m uk-flex uk-flex-middle">
+                <p class="partner-label uk-text-success uk-margin-small-left uk-margin-remove-bottom uk-text-semibold">
+                    Официальный партнер АО «Сбербанк Лизинг»
+                </p>
+            </div>
+            <div class="uk-navbar-right uk-visible@m">
+                <ul class="uk-navbar-nav uk-margin-right">
+                    {% include "inc/_menu_items.html" %}
+                </ul>
+                <div class="uk-navbar-item">
+                    <a class="uk-border-rounded uk-button uk-button-primary" href="#purchase-modal" uk-toggle
+                        data-purchase-open data-vehicle-id="{{ vehicle.pk }}" data-vehicle-title="{{ vehicle.title }}">
+                        Заявка
+                    </a>
+                </div>
+            </div>
+            <div class="uk-navbar-right uk-hidden@m">
+                <a class="uk-navbar-toggle"
+                   href="#"
+                   uk-toggle="target: #mobile-menu"
+                   aria-label="Открыть меню">
+                    <span uk-navbar-toggle-icon></span>
+                </a>
+            </div>
+        </div>
+    </nav>
+    <div id="mobile-menu" uk-offcanvas="overlay: true; flip: true">
+        <div class="uk-offcanvas-bar uk-flex uk-flex-column">
+            <button class="uk-offcanvas-close" type="button" uk-close aria-label="Закрыть меню"></button>
+            <div class="uk-margin-medium-bottom">
+                <a href="/" class="uk-logo" aria-label="На главную">
+                    <span>Techlot</span>
+                </a>
+            </div>
+           <ul class="uk-nav-primary" uk-nav>
+                {% include "inc/_menu_items.html" %}
+            </ul>
+            <hr>
+            {% include "inc/_contacts_socials.html" with variant="mobile" %}
+            <div class="uk-margin-auto-top uk-text-small uk-text-muted uk-margin-top">
+                © {{ now|date:"Y" }}
+            </div>
+        </div>
+    </div>
+</header>
+<div id="purchase-modal" uk-modal>
+    <div class="uk-modal-dialog uk-modal-body">
+        <button class="uk-modal-close-default" type="button" uk-close aria-label="Закрыть"></button>
+
+        <h3 class="uk-modal-title">Заявка</h3>
+
+        {% include "inc/_purchase_form.html" %}
+    </div>
+</div>
+<a class="to-top uk-icon-button" href="" uk-totop uk-scroll uk-scrollspy="cls: uk-animation-fade; hidden: true; repeat: true"></a>
+<main>
+    {% block content %}{% endblock %}
+    <section class="uk-section uk-light" id="feedback">
+        <div class="uk-container">
+            <div class="card-feedback uk-card uk-card-primary uk-card-body uk-border-rounded uk-padding-large uk-background-blend-multiply"
+                uk-scrollspy="cls: uk-animation-slide-bottom; hidden: true; repeat: false; delay: 80"
+            >
+                <div class="uk-grid-large uk-flex-middle" uk-grid>
+                    <div class="uk-width-1-2@m">
+                        <div class="uk-flex uk-flex-middle uk-gap-small uk-margin-bottom">
+                            <span class="uk-label uk-label-success uk-margin-small-right">Быстрый ответ</span>
+                            <span class="uk-text-small uk-text-muted">обычно до 10 минут</span>
+                        </div>
+                        <h2 class="uk-margin-remove">Давайте уточним детали</h2>
+                        <p class="uk-text-lead uk-text-muted uk-margin-small-top uk-text-break">Ответим на вопросы по стоимости, срокам и условиям — и предложим оптимальный вариант.</p>
+                        <div class="uk-margin-medium-top"></div>
+                    </div>
+                    <div class="uk-width-1-2@m">
+                        <div>
+                            <h3 class="uk-card-title uk-margin-remove-bottom">Оставьте контакты</h3>
+                            <p class="uk-text-small uk-text-muted uk-margin-small-top">Напишем в мессенджер или перезвоним — как вам удобнее.</p>
+                            <div class="uk-margin-top">
+                                {% include "inc/_purchase_form.html" %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="uk-divider-icon"></div>
+            </div>
+        </div>
+    </section>
+</main>
+<footer class="uk-section uk-section-secondary uk-light">
+  <div class="uk-container">
+      <div class="uk-grid-medium" uk-grid>
+            <div class="uk-width-expand@m uk-flex uk-flex-column">
+              <div class="uk-margin-bottom uk-flex">
+                  <a href="/" class="uk-logo uk-margin-right" aria-label="На главную"><span>Techlot</span></a>
+                    <ul class="uk-list uk-list-collapse uk-margin-remove uk-flex uk-flex-wrap gap-m">
+                        {% include "inc/_menu_items.html" %}
+                    </ul>
+              </div>
+              <p class="uk-text-meta uk-margin-auto-top">
+                Вся информация, касающаяся условий лизинговых программ, носит информационный характер и не является публичной офертой, 
+                в соответствии с положениями статьи 437(2) Гражданского кодекса Российской Федерации. 
+                Для получения подробной информации, пожалуйста, обращайтесь к клиентским менеджерам.
+              </p>
+            </div>
+          <div class="uk-width-1-4@m">
+              <h4 class="uk-heading-line uk-text-bold"><span>Контакты</span></h4>
+              <div class="uk-margin-small-bottom">
+                  {% for con in contacts %}
+                      <div class="uk-margin-small-bottom">
+                          <a class="uk-link-muted uk-text-small uk-flex uk-flex-middle" href="{{ con.link }}">
+                              <span class="uk-margin-small-right" uk-icon="icon: {{ con.contact_type }}"></span>
+                              <span>{{ con.value }}</span>
+                          </a>
+                      </div>
+                  {% endfor %}
+              </div>
+              {% if socials %}
+                  <div class="uk-margin-top">
+                      <p class="uk-text-small uk-text-bold uk-margin-small-bottom">Мы в социальных сетях:</p>
+                      <div class="uk-flex uk-flex-left">
+                          {% for soc in socials %}
+                              <a class="uk-icon-button uk-margin-small-right" 
+                                 href="{{ soc.link }}" 
+                                 target="_blank" 
+                                 title="{{ soc.title }}"
+                                 uk-icon="icon: {{ soc.contact_type }}; ratio: 1.2">
+                              </a>
+                          {% endfor %}
+                      </div>
+                  </div>
+              {% endif %}
+          </div>
+      </div>
+      <hr class="uk-margin-medium-top uk-margin-medium-bottom">
+    <div class="uk-grid-small uk-flex-middle" uk-grid>
+        <div class="uk-width-expand@s">
+            <p class="uk-text-small uk-text-muted uk-margin-remove">
+                © {% now "Y" %} . Все права защищены.
+            </p>
+        </div>
+        <div class="uk-width-expand@s">
+            <a href="https://site.onadmin.ru" class="uk-link-muted uk-text-small" target="_blank">Разработка сайтов
+                ONADMIN</a>
+        </div>
+        <div class="uk-width-auto@s">
+            <a href="/privacy/" class="uk-link-muted uk-text-small">Политика конфиденциальности</a>
+        </div>
+    </div>
+  </div>
+</footer>
+{% include "inc/_cookie.html" %}
+<script src="{% static 'common/js/script.js' %}"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>
