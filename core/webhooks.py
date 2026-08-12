@@ -89,27 +89,44 @@ def bitrix_catalog_webhook(request):
 #---------------------------------------------------------------
 
 def _bind_catalog_events(access_token: str, domain: str) -> None:
-    handler_url = f"https://techlot.ru/webhooks/bitrix/catalog/e608dd3fdbee717ca984a5f222eaddba/"
-    old_handler_url = "https://techlot.ru/webhooks/bitrix/catalog//"
+    """
+    Подписывает вебхук на события каталога Bitrix24.
+    
+    URL обработчика берётся из настроек Django (BITRIX_WEBHOOK_HANDLER_URL).
+    Токен для проверки запроса хранится в BITRIX_CATALOG_SECRET.
+    """
+    from django.conf import settings
+    
+    handler_url = getattr(
+        settings, 
+        "BITRIX_WEBHOOK_HANDLER_URL", 
+        "https://example.com/webhooks/bitrix/catalog/"
+    )
+    # Добавляем секретный токен для проверки подлинности запроса
+    if hasattr(settings, "BITRIX_CATALOG_SECRET") and settings.BITRIX_CATALOG_SECRET:
+        handler_url = f"{handler_url}{settings.BITRIX_CATALOG_SECRET}/"
+    
+    old_handler_url = getattr(settings, "BITRIX_OLD_HANDLER_URL", None)
 
     for event in ("CATALOG.PRODUCT.ON.ADD", "CATALOG.PRODUCT.ON.UPDATE"):
-        # Сначала удаляем старую подписку
-        try:
-            resp = req.post(
-                f"https://{domain}/rest/event.unbind",
-                json={"event": event, "handler": old_handler_url, "auth": access_token},
-                timeout=10,
-            )
-            logger.info("event.unbind %s: %s", event, resp.json())
-        except Exception as e:
-            logger.error("event.unbind %s: %s", event, e)
+        # Сначала удаляем старую подписку (если указан старый URL)
+        if old_handler_url:
+            try:
+                resp = req.post(
+                    f"https://{domain}/rest/event.unbind",
+                    json={"event": event, "handler": old_handler_url, "auth": access_token},
+                    timeout=getattr(settings, "BITRIX_TIMEOUT", 10),
+                )
+                logger.info("event.unbind %s: %s", event, resp.json())
+            except Exception as e:
+                logger.error("event.unbind %s: %s", event, e)
 
         # Создаём новую подписку
         try:
             resp = req.post(
                 f"https://{domain}/rest/event.bind",
                 json={"event": event, "handler": handler_url, "auth": access_token},
-                timeout=10,
+                timeout=getattr(settings, "BITRIX_TIMEOUT", 10),
             )
             data = resp.json()
             if data.get("result"):

@@ -205,7 +205,12 @@ class CoreConfig(AppConfig):
 
 BITRIX_WEBHOOK_URL = os.getenv("BITRIX_WEBHOOK_URL")
 BITRIX_ASSIGNED_ID = os.getenv("BITRIX_ASSIGNED_ID")
-BITRIX_TIMEOUT = 5
+
+# Таймаут запросов к Bitrix REST (секунды)
+BITRIX_TIMEOUT = int(os.getenv("BITRIX_TIMEOUT", default=15))
+
+# Антидубли: блокировка повторных событий на N секунд
+BITRIX_DEDUP_TTL = int(os.getenv("BITRIX_DEDUP_TTL", default=10))
 
 # Celery
 CELERY_BROKER_URL = REDIS_URL
@@ -227,15 +232,17 @@ CELERY_BEAT_SCHEDULE = {
 # Отдельный от BITRIX_WEBHOOK_URL (лиды)
 BITRIX_CATALOG_WEBHOOK_URL = os.getenv("BITRIX_CATALOG_WEBHOOK_URL")
 
-# Секретный токен — Bitrix будет слать его в заголовке X-Bitrix-Token
+# URL обработчика вебхуков (используется при регистрации событий в Bitrix)
+# Формат: https://yourdomain.com/webhooks/bitrix/catalog/<token>/
+BITRIX_WEBHOOK_HANDLER_URL = os.getenv("BITRIX_WEBHOOK_HANDLER_URL")
+
+# URL старого обработчика (опционально, для миграции)
+BITRIX_OLD_HANDLER_URL = os.getenv("BITRIX_OLD_HANDLER_URL")
+
+# Секретный токен для проверки подлинности запросов от Bitrix
 # Генерируем один раз: python -c "import secrets; print(secrets.token_hex(32))"
 # Передаём Bitrix-разработчику — он вставит в настройки исходящего события
 BITRIX_INCOMING_TOKEN = os.getenv("BITRIX_INCOMING_TOKEN")
 
-# Таймаут запросов к Bitrix REST (секунды)
-BITRIX_TIMEOUT = int(os.getenv("BITRIX_TIMEOUT", default=15))
-
-# Антидубли: блокировка повторных событий на N секунд
-BITRIX_DEDUP_TTL = int(os.getenv("BITRIX_DEDUP_TTL", default=10))
-
-BITRIX_CATALOG_SECRET = os.getenv("BITRIX_CATALOG_SECRET", default="no_secret")
+# Дополнительный секрет для защиты webhook endpoint (опционально)
+BITRIX_CATALOG_SECRET = os.getenv("BITRIX_CATALOG_SECRET", default="")
