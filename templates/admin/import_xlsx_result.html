@@ -1,0 +1,24 @@
+{% extends "admin/base_site.html" %}
+{% block content %}
+{% if dry_run %}
+<p style="color:#b00;">Dry-run: данные НЕ сохранены</p>
+{% endif %}
+
+<table>
+    <tr>
+        <th>Действие</th>
+        <th>Техника</th>
+        <th>Примечание</th>
+    </tr>
+    {% for item in preview %}
+    <tr>
+        <td>{{ item.0 }}</td>
+        <td>{{ item.1 }}</td>
+        <td>{{ item.2 }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<a href="../">← Вернуться</a>
+
+{% endblock %}

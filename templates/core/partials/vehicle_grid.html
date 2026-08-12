@@ -1,0 +1,7 @@
+<div id="vehicle-grid" class="grid-list" uk-scrollspy="target: .uk-card; cls:uk-animation-fade; delay: 80">
+    {% for vehicle in vehicles %}
+        {% include "core/vehicle_card.html" with vehicle=vehicle %}
+    {% empty %}
+        <div class="uk-alert uk-alert-warning">Ничего не найдено</div>
+    {% endfor %}
+</div>

@@ -1,0 +1,17 @@
+<div id="cookie-notice" hidden
+  class="uk-position-fixed uk-position-bottom uk-width-1-1 uk-background-muted uk-padding-small uk-text-center uk-animation-slide-bottom uk-position-z-index-highest" 
+>
+    <span>Мы используем cookies для улучшения работы сайта.</span>
+    <button class="uk-border-rounded uk-button uk-button-primary uk-button-small uk-margin-left">OK</button>
+    <script>
+        if (!localStorage.getItem('cookiesAccepted')) {
+            const notice = document.getElementById('cookie-notice');
+            notice.hidden = false;
+        
+            notice.querySelector('button').onclick = () => {
+                localStorage.setItem('cookiesAccepted', '1');
+                notice.remove();
+            };
+        }
+    </script>
+</div>

@@ -1,0 +1,35 @@
+{% load static %}
+{% load humanize %}
+<div class="uk-card uk-card-default uk-card-hover uk-border-rounded uk-flex uk-flex-column vehicle-card">
+    <div class="uk-card-media-top">
+        {% if vehicle.stock_status %}
+        <span class="uk-badge uk-position-top-right uk-margin-small-right uk-margin-small-top">{{ vehicle.get_stock_status_display }}</span>
+        {% endif %}
+        <a href="{% url 'core:vehicle_detail' vehicle.slug %}">
+            <img class="card-img" src="{% if vehicle.main_photo %}{{ vehicle.main_photo.url }}{% else %}{% static 'common/img/no-image.svg' %}{% endif %}" alt="АВТОМОБИЛЬ">
+        </a>
+    </div>
+    <div class="card-body uk-flex uk-flex-column">
+        <h3>
+            <a class="uk-link-text" href="{% url 'core:vehicle_detail' vehicle.slug %}">{{ vehicle.title }}</a>
+        </h3>
+        <div class="uk-flex uk-margin-bottom">
+            <div class="uk-text-truncate uk-text-bold uk-text-small">{{ vehicle.year }}</div>
+            {% if vehicle.mileage_km %}
+                <div class="uk-text-truncate uk-text-small uk-margin-xsmall-left uk-margin-xsmall-right">/</div>
+                <div class="uk-text-truncate uk-text-bold uk-text-small">{{ vehicle.mileage_km|intcomma }} км.</div>
+            {% endif %}
+        </div>
+        {% if vehicle.price_rub %}
+        <h4 class="uk-text-truncate uk-text-bold uk-margin-auto-top uk-margin-small-bottom">{{ vehicle.price_rub|intcomma }} руб.</h4>
+        {% endif %}
+    </div>
+    {% if vehicle.stock_status == "sold" %}
+    <button class="uk-button uk-button-secondary" disabled>Продано</button>
+    {% else %}
+    <a class="uk-button uk-button-secondary" href="#purchase-modal" uk-toggle="" role="button"  
+        data-purchase-open data-vehicle-id="{{ vehicle.pk }}" data-vehicle-title="{{ vehicle.title }}">
+        Заказать
+    </a>
+    {% endif %}
+</div>

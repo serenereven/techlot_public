@@ -1,0 +1,40 @@
+{% load querystring %}
+{% qs_without_page as qp %}
+
+{% if is_paginated %}
+    <ul class="pagination uk-pagination uk-flex-center uk-margin-large-top" uk-margin data-pagination>
+        {% if page_obj.has_previous %}
+            <li>
+                <a href="?page={{ page_obj.previous_page_number }}{{ qp }}" data-page-link>
+                    <span uk-pagination-previous></span>
+                </a>
+            </li>
+        {% else %}
+            <li class="uk-disabled">
+                <span><span uk-pagination-previous></span></span>
+            </li>
+        {% endif %}
+
+        {% for page in page_obj.paginator.page_range %}
+            {% if page == page_obj.number %}
+                <li class="uk-active"><span>{{ page }}</span></li>
+            {% elif page >= page_obj.number|add:"-2" and page <= page_obj.number|add:"2" %}
+                <li><a href="?page={{ page }}{{ qp }}" data-page-link>{{ page }}</a></li>
+            {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+            <li>
+                <a href="?page={{ page_obj.next_page_number }}{{ qp }}" data-page-link>
+                    <span uk-pagination-next></span>
+                </a>
+            </li>
+        {% else %}
+            <li class="uk-disabled">
+                <span><span uk-pagination-next></span></span>
+            </li>
+        {% endif %}
+    </ul>
+{% else %}
+    <div data-pagination></div>
+{% endif %}
