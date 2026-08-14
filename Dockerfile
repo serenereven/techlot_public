@@ -19,5 +19,4 @@ COPY . .
 COPY entrypoint.sh /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
 
-# ВАЖНО: имя проекта APPNAME, как в wsgi.py
 CMD ["gunicorn", "techlot.wsgi:application", "-b", "0.0.0.0:8000"]

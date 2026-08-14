@@ -5,45 +5,48 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('core', '0007_purchaserequest_inn_purchaserequest_request_type_and_more'),
+        ("core", "0007_purchaserequest_inn_purchaserequest_request_type_and_more"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='vehicle',
-            name='maps_code',
-            field=models.TextField(blank=True, verbose_name='Код карты'),
+            model_name="vehicle",
+            name="maps_code",
+            field=models.TextField(blank=True, verbose_name="Код карты"),
         ),
         migrations.AlterField(
-            model_name='brand',
-            name='name',
-            field=models.CharField(db_index=True, max_length=80, unique=True, verbose_name='Марка'),
+            model_name="brand",
+            name="name",
+            field=models.CharField(db_index=True, max_length=80, unique=True, verbose_name="Марка"),
         ),
         migrations.AlterField(
-            model_name='city',
-            name='name',
-            field=models.CharField(db_index=True, max_length=120, verbose_name='Город'),
+            model_name="city",
+            name="name",
+            field=models.CharField(db_index=True, max_length=120, verbose_name="Город"),
         ),
         migrations.AlterField(
-            model_name='purchaserequest',
-            name='phone',
-            field=common.models.fields.PhoneField(max_length=16, validators=[common.models.fields.validate_phone, common.models.fields.validate_phone], verbose_name='Телефон'),
+            model_name="purchaserequest",
+            name="phone",
+            field=common.models.fields.PhoneField(
+                max_length=16,
+                validators=[common.models.fields.validate_phone, common.models.fields.validate_phone],
+                verbose_name="Телефон",
+            ),
         ),
         migrations.AlterField(
-            model_name='region',
-            name='name',
-            field=models.CharField(db_index=True, max_length=120, unique=True, verbose_name='Регион'),
+            model_name="region",
+            name="name",
+            field=models.CharField(db_index=True, max_length=120, unique=True, verbose_name="Регион"),
         ),
         migrations.AlterField(
-            model_name='vehiclemodel',
-            name='name',
-            field=models.CharField(db_index=True, max_length=120, verbose_name='Модель'),
+            model_name="vehiclemodel",
+            name="name",
+            field=models.CharField(db_index=True, max_length=120, verbose_name="Модель"),
         ),
         migrations.AlterField(
-            model_name='vehicletype',
-            name='code',
-            field=models.CharField(db_index=True, max_length=32, unique=True, verbose_name='Код'),
+            model_name="vehicletype",
+            name="code",
+            field=models.CharField(db_index=True, max_length=32, unique=True, verbose_name="Код"),
         ),
     ]

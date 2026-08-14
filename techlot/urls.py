@@ -12,7 +12,6 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("ckeditor/", include("ckeditor_uploader.urls")),
     path("", include(("core.urls", "core"), namespace="core")),
-
     # SEO
     path("robots.txt", robots_txt, name="robots_txt"),
     path("sitemap.xml", sitemap, {"sitemaps": sitemaps}, name="django_sitemap"),

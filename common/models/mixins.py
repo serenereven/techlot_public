@@ -21,6 +21,7 @@ class UUIDPrimaryKeyModel(models.Model):
     """
     UUID как primary key
     """
+
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
     class Meta:
@@ -47,6 +48,7 @@ class SoftDeleteModel(models.Model):
     - alive: только не удаленные
     - deleted: только удаленные
     """
+
     deleted_at = models.DateTimeField("Удалено", blank=True, null=True, db_index=True)
 
     objects = SoftDeleteAllManager()
@@ -75,10 +77,9 @@ class PublishableModel(models.Model):
     - published: только опубликованные
     - drafts: только черновики
     """
+
     is_published = models.BooleanField("Опубликовано", default=False)
-    published_at = models.DateTimeField(
-        "Дата публикации", blank=True, null=True, db_index=True
-    )
+    published_at = models.DateTimeField("Дата публикации", blank=True, null=True, db_index=True)
 
     objects = models.Manager()
     published = PublishedManager()
@@ -108,6 +109,7 @@ class SluggedModel(models.Model):
     - уникальность через DB constraint
     - slug, slug-2, slug-3...
     """
+
     slug = models.SlugField("Slug", max_length=255, blank=True, db_index=True, unique=True)
 
     class Meta:
@@ -147,6 +149,7 @@ class SEOModel(models.Model):
     """
     SEO поля + дефолты из title/content
     """
+
     meta_title = models.CharField("Meta title", max_length=255, blank=True)
     meta_description = models.CharField("Meta description", max_length=160, blank=True)
     meta_keywords = models.CharField("Meta keywords", max_length=255, blank=True)
@@ -175,9 +178,7 @@ class SEOModel(models.Model):
             self.meta_title = self._truncate(self.get_seo_title_fallback(), 255)
 
         if not self.meta_description:
-            self.meta_description = self._truncate(
-                self.get_seo_description_fallback(), 160
-            )
+            self.meta_description = self._truncate(self.get_seo_description_fallback(), 160)
 
         if not self.og_title:
             self.og_title = self.meta_title
@@ -201,6 +202,7 @@ class FullContentModel(
     """
     Полная база: UUID + timestamps + soft delete + publish + slug + SEO + title/content
     """
+
     title = models.CharField("Заголовок", max_length=255)
     content = models.TextField("Контент", blank=True)
 

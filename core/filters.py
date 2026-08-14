@@ -9,28 +9,46 @@ from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
 
 
 def get_clean_queryset(model_class):
-    cache_key = f'clean_queryset_{model_class.__name__}'
+    cache_key = f"clean_queryset_{model_class.__name__}"
     valid_ids = cache.get(cache_key)
 
     if valid_ids is None:
-        pattern = re.compile(r'^[a-zA-Z0-9а-яА-ЯёЁ\s]+$')
-        valid_ids = [
-            obj_id for obj_id, name in model_class.objects.values_list('id', 'name')
-            if pattern.match(name)
-        ]
+        pattern = re.compile(r"^[a-zA-Z0-9а-яА-ЯёЁ\s]+$")
+        valid_ids = [obj_id for obj_id, name in model_class.objects.values_list("id", "name") if pattern.match(name)]
         cache.set(cache_key, valid_ids, timeout=3600)
 
     return model_class.objects.filter(id__in=valid_ids)
 
 
+def get_available_vehicle_types():
+    """
+    Типы техники, для которых есть хотя бы одна опубликованная карточка.
+    Кэш на 5 минут, без инвалидации по сигналам — обновление с небольшой задержкой.
+    """
+    cache_key = "available_vehicle_types"
+    ids = cache.get(cache_key)
+
+    if ids is None:
+        ids = list(
+            Vehicle.published.alive()
+            .order_by("-to_homepage", "-created_at")
+            .filter(vehicle_type__isnull=False)
+            .values_list("vehicle_type_id", flat=True)
+            .distinct()
+        )
+        cache.set(cache_key, ids, timeout=300)
+
+    return VehicleType.objects.filter(id__in=ids).order_by("order")
+
+
 @receiver([post_save, post_delete], sender=Brand)
 def invalidate_brand_cache(sender, **kwargs):
-    cache.delete('clean_queryset_Brand')
+    cache.delete("clean_queryset_Brand")
 
 
 @receiver([post_save, post_delete], sender=VehicleModel)
 def invalidate_vehicle_model_cache(sender, **kwargs):
-    cache.delete('clean_queryset_VehicleModel')
+    cache.delete("clean_queryset_VehicleModel")
 
 
 class VehicleFilter(django_filters.FilterSet):
@@ -64,7 +82,7 @@ class VehicleFilter(django_filters.FilterSet):
 
     vehicle_type = django_filters.ModelMultipleChoiceFilter(
         field_name="vehicle_type",
-        queryset=VehicleType.objects.all(),
+        queryset=lambda request: get_available_vehicle_types(),
         widget=forms.CheckboxSelectMultiple,
     )
 
@@ -87,12 +105,12 @@ class VehicleFilter(django_filters.FilterSet):
             return queryset
 
         vector = (
-            SearchVector("title", weight="A", config="russian") +
-            SearchVector("content", weight="B", config="russian") +
-            SearchVector("brand__name", weight="A", config="russian") +
-            SearchVector("model__name", weight="A", config="russian") +
-            SearchVector("city__name", weight="A", config="russian") +
-            SearchVector("vin", weight="A", config="simple")
+            SearchVector("title", weight="A", config="russian")
+            + SearchVector("content", weight="B", config="russian")
+            + SearchVector("brand__name", weight="A", config="russian")
+            + SearchVector("model__name", weight="A", config="russian")
+            + SearchVector("city__name", weight="A", config="russian")
+            + SearchVector("vin", weight="A", config="simple")
         )
         query = SearchQuery(value.strip(), config="russian", search_type="websearch")
         return queryset.annotate(rank=SearchRank(vector, query)).filter(rank__gt=0).order_by("-rank")
@@ -110,10 +128,12 @@ class VehicleFilter(django_filters.FilterSet):
             if isinstance(field.widget, (forms.Select, forms.SelectMultiple)):
                 field.widget.attrs.update({"class": "uk-select"})
             elif isinstance(field.widget, (forms.NumberInput, forms.TextInput)):
-                field.widget.attrs.update({
-                    "class": "uk-input uk-border-rounded",
-                    "placeholder": field.label,
-                })
+                field.widget.attrs.update(
+                    {
+                        "class": "uk-input uk-border-rounded",
+                        "placeholder": field.label,
+                    }
+                )
 
     class Meta:
         model = Vehicle

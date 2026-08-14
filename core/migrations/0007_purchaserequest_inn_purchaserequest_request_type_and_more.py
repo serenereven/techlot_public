@@ -5,30 +5,39 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('core', '0006_enginetype_technicalcondition_transmission_and_more'),
+        ("core", "0006_enginetype_technicalcondition_transmission_and_more"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='purchaserequest',
-            name='inn',
-            field=models.CharField(blank=True, max_length=12, null=True, verbose_name='ИНН'),
+            model_name="purchaserequest",
+            name="inn",
+            field=models.CharField(blank=True, max_length=12, null=True, verbose_name="ИНН"),
         ),
         migrations.AddField(
-            model_name='purchaserequest',
-            name='request_type',
-            field=models.CharField(choices=[('purchase', 'Покупка'), ('leasing', 'Лизинг')], db_index=True, default='purchase', max_length=20, verbose_name='Тип заявки'),
+            model_name="purchaserequest",
+            name="request_type",
+            field=models.CharField(
+                choices=[("purchase", "Покупка"), ("leasing", "Лизинг")],
+                db_index=True,
+                default="purchase",
+                max_length=20,
+                verbose_name="Тип заявки",
+            ),
         ),
         migrations.AddField(
-            model_name='vehicle',
-            name='to_homepage',
-            field=models.BooleanField(db_index=True, default=False, verbose_name='На главную'),
+            model_name="vehicle",
+            name="to_homepage",
+            field=models.BooleanField(db_index=True, default=False, verbose_name="На главную"),
         ),
         migrations.AlterField(
-            model_name='purchaserequest',
-            name='phone',
-            field=common.models.fields.PhoneField(max_length=16, validators=[common.models.fields.validate_phone, common.models.fields.validate_phone], verbose_name='Телефон'),
+            model_name="purchaserequest",
+            name="phone",
+            field=common.models.fields.PhoneField(
+                max_length=16,
+                validators=[common.models.fields.validate_phone, common.models.fields.validate_phone],
+                verbose_name="Телефон",
+            ),
         ),
     ]

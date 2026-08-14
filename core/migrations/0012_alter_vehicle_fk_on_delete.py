@@ -21,17 +21,12 @@ def cleanup_orphan_lookups(apps, schema_editor):
     }
 
     for name, (Model, field_name) in lookup_fields.items():
-        used_ids = set(
-            Vehicle.objects
-            .exclude(**{f"{field_name}_id": None})
-            .values_list(f"{field_name}_id", flat=True)
-        )
+        used_ids = set(Vehicle.objects.exclude(**{f"{field_name}_id": None}).values_list(f"{field_name}_id", flat=True))
         deleted_count, _ = Model.objects.exclude(pk__in=used_ids).delete()
         print(f"  {name}: удалено {deleted_count} записей")
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("core", "0011_vehicle_bitrix_id_alter_basicpage_slug_and_more"),
     ]
@@ -39,7 +34,6 @@ class Migration(migrations.Migration):
     operations = [
         # 1. Чистим осиротевшие записи пока ещё стоит PROTECT
         migrations.RunPython(cleanup_orphan_lookups, migrations.RunPython.noop),
-
         # 2. Меняем on_delete → SET_NULL
         migrations.AlterField(
             model_name="vehicle",

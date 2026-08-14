@@ -5,40 +5,66 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('core', '0015_alter_purchaserequest_phone_alter_vehicle_model'),
+        ("core", "0015_alter_purchaserequest_phone_alter_vehicle_model"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='purchaserequest',
-            name='phone',
-            field=common.models.fields.PhoneField(max_length=15, validators=[common.models.fields.validate_phone, common.models.fields.validate_phone], verbose_name='Телефон'),
+            model_name="purchaserequest",
+            name="phone",
+            field=common.models.fields.PhoneField(
+                max_length=15,
+                validators=[common.models.fields.validate_phone, common.models.fields.validate_phone],
+                verbose_name="Телефон",
+            ),
         ),
         migrations.AlterField(
-            model_name='vehicle',
-            name='maps_code',
-            field=models.TextField(blank=True, null=True, verbose_name='Код карты'),
+            model_name="vehicle",
+            name="maps_code",
+            field=models.TextField(blank=True, null=True, verbose_name="Код карты"),
         ),
         migrations.AlterField(
-            model_name='vehicle',
-            name='mileage_km',
-            field=models.PositiveIntegerField(blank=True, default=0, null=True, verbose_name='Пробег, км'),
+            model_name="vehicle",
+            name="mileage_km",
+            field=models.PositiveIntegerField(blank=True, default=0, null=True, verbose_name="Пробег, км"),
         ),
         migrations.AlterField(
-            model_name='vehicle',
-            name='price_rub',
-            field=models.DecimalField(blank=True, db_index=True, decimal_places=0, max_digits=12, null=True, verbose_name='Стоимость, ₽'),
+            model_name="vehicle",
+            name="price_rub",
+            field=models.DecimalField(
+                blank=True, db_index=True, decimal_places=0, max_digits=12, null=True, verbose_name="Стоимость, ₽"
+            ),
         ),
         migrations.AlterField(
-            model_name='vehicle',
-            name='stock_status',
-            field=models.CharField(blank=True, choices=[('awaiting', 'В ожидании поступления'), ('in_stock', 'В наличии'), ('reserved', 'В резерве'), ('leasing', 'Продажа в лизинг'), ('sold', 'Продано')], db_index=True, default='in_stock', max_length=20, null=True, verbose_name='Статус'),
+            model_name="vehicle",
+            name="stock_status",
+            field=models.CharField(
+                blank=True,
+                choices=[
+                    ("awaiting", "В ожидании поступления"),
+                    ("in_stock", "В наличии"),
+                    ("reserved", "В резерве"),
+                    ("leasing", "Продажа в лизинг"),
+                    ("sold", "Продано"),
+                ],
+                db_index=True,
+                default="in_stock",
+                max_length=20,
+                null=True,
+                verbose_name="Статус",
+            ),
         ),
         migrations.AlterField(
-            model_name='vehicle',
-            name='wheel_formula',
-            field=models.CharField(blank=True, db_index=True, help_text='Например: 4x2, 6x4, 6x6', max_length=20, null=True, verbose_name='Колесная формула'),
+            model_name="vehicle",
+            name="wheel_formula",
+            field=models.CharField(
+                blank=True,
+                db_index=True,
+                help_text="Например: 4x2, 6x4, 6x6",
+                max_length=20,
+                null=True,
+                verbose_name="Колесная формула",
+            ),
         ),
     ]

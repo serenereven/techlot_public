@@ -11,15 +11,16 @@ logger = logging.getLogger(__name__)
 # Значения берём из valueEnum поля property117
 # ------------------------------------------------------------------
 BITRIX_STATUS_MAP: dict[str, str] = {
-    "\u0412 \u043d\u0430\u043b\u0438\u0447\u0438\u0438":               "in_stock",
-    "\u0412 \u0440\u0435\u0437\u0435\u0440\u0432\u0435":               "reserved",
-    "\u0412 \u043e\u0436\u0438\u0434\u0430\u043d\u0438\u0438 \u043f\u043e\u0441\u0442\u0443\u043f\u043b\u0435\u043d\u0438\u044f":  "awaiting",
-    "\u041f\u0440\u043e\u0434\u0430\u043d\u043e":                       "sold",
+    "\u0412 \u043d\u0430\u043b\u0438\u0447\u0438\u0438": "in_stock",
+    "\u0412 \u0440\u0435\u0437\u0435\u0440\u0432\u0435": "reserved",
+    "\u0412 \u043e\u0436\u0438\u0434\u0430\u043d\u0438\u0438 \u043f\u043e\u0441\u0442\u0443\u043f\u043b\u0435\u043d\u0438\u044f": "awaiting",
+    "\u041f\u0440\u043e\u0434\u0430\u043d\u043e": "sold",
 }
 
 # ------------------------------------------------------------------
 # Вспомогательные функции
 # ------------------------------------------------------------------
+
 
 def _prop_value(product: dict, prop_key: str) -> Any:
     """
@@ -66,9 +67,11 @@ def _get_or_create(model_class, **kwargs):
         logger.error("get_or_create %s %s: %s", model_class.__name__, kwargs, e)
         return None
 
+
 # ------------------------------------------------------------------
 # Маппинг полей
 # ------------------------------------------------------------------
+
 
 def map_bitrix_to_vehicle_fields(product: dict[str, Any]) -> dict[str, Any]:
     """
@@ -78,14 +81,19 @@ def map_bitrix_to_vehicle_fields(product: dict[str, Any]) -> dict[str, Any]:
     Фото и цена обрабатываются отдельно в sync.py.
     """
     from core.models import (
-        Brand, VehicleModel, VehicleType,
-        EngineType, Transmission, TechnicalCondition, City,
+        Brand,
+        VehicleModel,
+        VehicleType,
+        EngineType,
+        Transmission,
+        TechnicalCondition,
+        City,
     )
 
     fields: dict[str, Any] = {}
 
     # Базовые поля
-    fields["title"]   = product.get("name") or ""
+    fields["title"] = product.get("name") or ""
     fields["content"] = product.get("detailText") or product.get("previewText") or ""
 
     # VIN / артикул — property109
@@ -134,8 +142,7 @@ def map_bitrix_to_vehicle_fields(product: dict[str, Any]) -> dict[str, Any]:
     # Модель — property141 (текстовое поле "Модель 2.0")
     model_name = _prop_value(product, "property141")
     fields["model"] = (
-        _get_or_create(VehicleModel, brand=brand, name=str(model_name).strip())
-        if (model_name and brand) else None
+        _get_or_create(VehicleModel, brand=brand, name=str(model_name).strip()) if (model_name and brand) else None
     )
 
     # Год выпуска — property143
@@ -145,30 +152,24 @@ def map_bitrix_to_vehicle_fields(product: dict[str, Any]) -> dict[str, Any]:
 
     # Тип двигателя — property129
     engine_type_name = _prop_value(product, "property129")
-    fields["engine_type"] = (
-        _get_or_create(EngineType, name=str(engine_type_name).strip())
-        if engine_type_name else None
-    )
+    fields["engine_type"] = _get_or_create(EngineType, name=str(engine_type_name).strip()) if engine_type_name else None
 
     # Коробка передач — property133
     transmission_name = _prop_value(product, "property133")
     fields["transmission"] = (
-        _get_or_create(Transmission, name=str(transmission_name).strip())
-        if transmission_name else None
+        _get_or_create(Transmission, name=str(transmission_name).strip()) if transmission_name else None
     )
 
     # Техническое состояние — property137
     condition_name = _prop_value(product, "property137")
     fields["technical_condition"] = (
-        _get_or_create(TechnicalCondition, name=str(condition_name).strip())
-        if condition_name else None
+        _get_or_create(TechnicalCondition, name=str(condition_name).strip()) if condition_name else None
     )
 
     # Вид номенклатуры / тип техники — property107
     vehicle_type_name = _prop_value(product, "property107")
     fields["vehicle_type"] = (
-        _get_or_create(VehicleType, name=str(vehicle_type_name).strip())
-        if vehicle_type_name else None
+        _get_or_create(VehicleType, name=str(vehicle_type_name).strip()) if vehicle_type_name else None
     )
 
     # Город / площадка — property119
@@ -180,6 +181,7 @@ def map_bitrix_to_vehicle_fields(product: dict[str, Any]) -> dict[str, Any]:
 
     return fields
 
+
 def extract_photo_urls(product: dict, **kwargs) -> list:
     """
     Возвращает список urlMachine из полей с фото.
@@ -188,7 +190,7 @@ def extract_photo_urls(product: dict, **kwargs) -> list:
     """
     urls = []
     for prop_key in ("property45", "property49"):
-        for item in (product.get(prop_key) or []):
+        for item in product.get(prop_key) or []:
             value = item.get("value") if isinstance(item, dict) else None
             if isinstance(value, dict):
                 url = value.get("urlMachine")

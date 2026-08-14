@@ -103,9 +103,12 @@ def sync_vehicle(bitrix_product_id: int) -> Vehicle | None:
     )
 
     return vehicle
+
+
 # ------------------------------------------------------------------
 # Внутренние функции
 # ------------------------------------------------------------------
+
 
 def _is_offer(product: dict[str, Any]) -> bool:
     """
@@ -120,6 +123,7 @@ def _is_offer(product: dict[str, Any]) -> bool:
         return bool(parent.get("value"))
     return bool(parent)
 
+
 def _get_parent_id(product: dict[str, Any]) -> int | None:
     """Извлекает ID основного товара из поля parentId."""
     parent = product.get("parentId")
@@ -133,6 +137,7 @@ def _get_parent_id(product: dict[str, Any]) -> int | None:
     except (TypeError, ValueError):
         return None
 
+
 def _upsert_vehicle(bitrix_id: int, fields: dict[str, Any]) -> Vehicle | None:
     vehicle = None
     is_new = False
@@ -145,7 +150,7 @@ def _upsert_vehicle(bitrix_id: int, fields: dict[str, Any]) -> Vehicle | None:
 
     if vehicle is None:
         # Новая карточка: создаём только если данные полные.
-        # Иначе задача будет уходить на повтор.
+        # Пустышку создавать не имеет смысла — задача уйдёт на повтор.
         missing = [f for f in REQUIRED_FIELDS if not fields.get(f)]
         if missing:
             logger.warning(
@@ -192,6 +197,7 @@ def _upsert_vehicle(bitrix_id: int, fields: dict[str, Any]) -> Vehicle | None:
 
     return vehicle
 
+
 def _sync_photos(vehicle: Vehicle, product: dict[str, Any], client: BitrixCatalogClient) -> None:
     """
     Скачивает фото из Bitrix и сохраняет в VehiclePhoto.
@@ -207,12 +213,14 @@ def _sync_photos(vehicle: Vehicle, product: dict[str, Any], client: BitrixCatalo
 
     saved = 0
     for sort_order, url in enumerate(urls):
-        # urlMachine может быть относительным, дополняем базовым URL
+        # urlMachine может быть относительным — дополняем базовым URL
         if url.startswith("/rest/"):
             from django.conf import settings
-            from urllib.parse import urlparse
+
+            # from urllib.parse import urlparse
             base = settings.BITRIX_CATALOG_WEBHOOK_URL.rstrip("/")
-            parsed = urlparse(base)
+            # parsed = urlparse(base)
+            # Токен уже есть в base_url вебхука
             url = f"{base}{url[5:]}"  # убираем /rest и подставляем полный URL с токеном
 
         content = client.download_photo(url)

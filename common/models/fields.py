@@ -21,9 +21,7 @@ def _normalize_phone(digits: str) -> str:
 def validate_phone(value: str):
     digits = _extract_digits(value)
     if len(digits) != 11 or digits[0] not in ("7", "8"):
-        raise ValidationError(
-            "Введите российский номер телефона (11 цифр, начиная с 7 или 8)."
-        )
+        raise ValidationError("Введите российский номер телефона (11 цифр, начиная с 7 или 8).")
 
 
 class NormalizedEmailField(models.EmailField):

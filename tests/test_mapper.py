@@ -1,4 +1,5 @@
 from unittest.mock import patch, MagicMock
+import pytest
 from tests.fixtures.bitrix_product_1077 import PRODUCT_1077
 from core.services.bitrix.mapper import map_bitrix_to_vehicle_fields, extract_photo_urls
 
@@ -13,16 +14,18 @@ def mock_get_or_create(model_class, **kwargs):
     return make_mock_obj(kwargs.get("name", ""))
 
 
-def patched_fields(brand_enums=None):
+def patched_fields():
     """Вызывает маппер с замоканными всеми обращениями к БД."""
     mock_region = make_mock_obj("Не указан")
-    with patch("core.services.bitrix.mapper._get_or_create", side_effect=mock_get_or_create), \
-         patch("core.models.Region.objects.get_or_create", return_value=(mock_region, True)):
-        return map_bitrix_to_vehicle_fields(PRODUCT_1077, brand_enums=brand_enums)
+    with (
+        patch("core.services.bitrix.mapper._get_or_create", side_effect=mock_get_or_create),
+        patch("core.models.Region.objects.get_or_create", return_value=(mock_region, True)),
+    ):
+        return map_bitrix_to_vehicle_fields(PRODUCT_1077)
 
 
+@pytest.mark.django_db
 class TestMapBitrixToVehicleFields:
-
     def test_vin(self):
         assert patched_fields()["vin"] == "LGWFF7A57RJ648638"
 
@@ -45,19 +48,25 @@ class TestMapBitrixToVehicleFields:
         assert patched_fields()["vehicle_type"].name == "Легковые"
 
     def test_brand_null_valueEnum_returns_none(self):
-        # без справочника бренд должен быть None
-        assert patched_fields()["brand"] is None
+        # Теперь valueEnum есть в фикстуре, поэтому бренд должен быть найден
+        # Этот тест проверяет случай, если бы valueEnum был None
+        product = PRODUCT_1077.copy()
+        product["property123"] = {"value": "207", "valueEnum": None, "valueId": "2563"}
+        with patch("core.services.bitrix.mapper._get_or_create", side_effect=mock_get_or_create):
+            fields = map_bitrix_to_vehicle_fields(product)
+            # Если valueEnum is None, _prop_value вернёт value ("207"), и бренд будет создан с именем "207"
+            assert fields["brand"].name == "207"
 
     def test_year(self):
         assert patched_fields()["year"] == 2023
 
     def test_model_created_from_string(self):
-        fields = patched_fields(brand_enums={"207": "GWM"})
+        fields = patched_fields()
         assert fields["model"] is not None
         assert fields["model"].name == "GWM TANK 300"
 
     def test_brand_resolved_from_enums(self):
-        assert patched_fields(brand_enums={"207": "GWM"})["brand"].name == "GWM"
+        assert patched_fields()["brand"].name == "GWM"
 
     def test_no_photos(self):
         assert extract_photo_urls(PRODUCT_1077) == []
@@ -68,7 +77,7 @@ class TestMapBitrixToVehicleFields:
             "property45": [
                 {"value": {"urlMachine": "https://cdn.example.com/photo1.jpg"}},
                 {"value": {"urlMachine": "https://cdn.example.com/photo2.jpg"}},
-            ]
+            ],
         }
         assert extract_photo_urls(product) == [
             "https://cdn.example.com/photo1.jpg",

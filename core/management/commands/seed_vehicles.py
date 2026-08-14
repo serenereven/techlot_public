@@ -135,17 +135,13 @@ class Command(BaseCommand):
                     f"Год: {year}. "
                     f"Состояние: {random.choice(conditions).label}."
                 ),
-
                 # Локация
                 city=city,
-
                 # Тип техники
                 vehicle_type=random.choice(vehicle_types),
-
                 # Справочники
                 brand=brand,
                 model=vm,
-
                 # Техническое
                 engine_type=random.choice(engine_types),
                 vin=vin,
@@ -156,11 +152,9 @@ class Command(BaseCommand):
                 color=random.choice(colors),
                 engine_power_hp=random.choice([None, 150, 200, 240, 310, 420, 500]),
                 wheel_formula=random.choice(wheel_formulas),
-
                 # Цена и наличие
                 price_rub=Decimal(price),
                 stock_status=random.choice(stock_statuses),
-
                 # Фото пропускаем (main_photo=None по умолчанию)
             )
 

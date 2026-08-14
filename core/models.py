@@ -3,7 +3,6 @@ from common.models import (
     UUIDPrimaryKeyModel,
     FullContentModel,
     PhoneField,
-    NormalizedEmailField,
     TimeStampedModel,
     PublishableModel,
 )
@@ -11,6 +10,7 @@ from common.models import (
 # =========================
 # Справочники
 # =========================
+
 
 class Region(UUIDPrimaryKeyModel):
     name = models.CharField("Регион", max_length=120, unique=True, db_index=True)
@@ -87,6 +87,7 @@ class VehicleModel(UUIDPrimaryKeyModel):
     def __str__(self):
         return f"{self.brand.name} {self.name}"
 
+
 class EngineType(UUIDPrimaryKeyModel):
     name = models.CharField("Тип двигателя", max_length=80, unique=True)
 
@@ -122,6 +123,7 @@ class TechnicalCondition(UUIDPrimaryKeyModel):
     def __str__(self):
         return self.name
 
+
 class VehicleType(UUIDPrimaryKeyModel):
     code = models.CharField("Код", max_length=32, unique=True, db_index=True)
     name = models.CharField("Название", max_length=120)
@@ -136,16 +138,19 @@ class VehicleType(UUIDPrimaryKeyModel):
     def __str__(self):
         return self.name
 
+
 # =========================
 # Каталог
 # =========================
+
 
 class StockStatus(models.TextChoices):
     AWAITING = "awaiting", "В ожидании поступления"
     IN_STOCK = "in_stock", "В наличии"
     RESERVED = "reserved", "В резерве"
-    LEASING = "leasing", "Продажа в лизинг" 
+    LEASING = "leasing", "Продажа в лизинг"
     SOLD = "sold", "Продано"
+
 
 class VehiclePhoto(models.Model):
     vehicle = models.ForeignKey(
@@ -187,10 +192,7 @@ class Vehicle(FullContentModel):
     - title + content (content = описание)
     """
 
-    bitrix_id = models.IntegerField(
-        verbose_name="Bitrix ID", 
-        null=True, blank=True, unique=True, db_index=True
-    )
+    bitrix_id = models.IntegerField(verbose_name="Bitrix ID", null=True, blank=True, unique=True, db_index=True)
     city = models.ForeignKey(
         City,
         on_delete=models.PROTECT,
@@ -225,7 +227,7 @@ class Vehicle(FullContentModel):
         verbose_name="Модель",
         db_index=True,
         blank=True,
-        null=True, 
+        null=True,
     )
     engine_type = models.ForeignKey(
         EngineType,
@@ -263,7 +265,7 @@ class Vehicle(FullContentModel):
 
     engine_power_hp = models.DecimalField(
         "Мощность двигателя, л.с.",
-        max_digits=8,      # хватит до 99999.99
+        max_digits=8,  # хватит до 99999.99
         decimal_places=3,  # 2 знака после запятой
         blank=True,
         null=True,
@@ -354,7 +356,8 @@ class Vehicle(FullContentModel):
 class RequestType(models.TextChoices):
     PURCHASE = "purchase", "Покупка"
     LEASING = "leasing", "Лизинг"
-    
+
+
 class PurchaseRequest(UUIDPrimaryKeyModel, TimeStampedModel):
     """
     Заявка на покупку (форма обратной связи)
@@ -423,6 +426,7 @@ class PurchaseRequest(UUIDPrimaryKeyModel, TimeStampedModel):
 # =========================
 # Контакты
 # =========================
+
 
 class ContactType(models.TextChoices):
     PHONE = "receiver", "Телефон"
@@ -516,9 +520,10 @@ class Contact(UUIDPrimaryKeyModel, TimeStampedModel, PublishableModel):
 # Простые страницы
 # =========================
 
+
 class BasicPage(FullContentModel):
     is_navbar = models.BooleanField("В меню", default=False)
-    
+
     class Meta:
         verbose_name = "Простая страница"
         verbose_name_plural = "Простые страницы"

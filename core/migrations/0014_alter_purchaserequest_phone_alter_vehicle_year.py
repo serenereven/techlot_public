@@ -5,20 +5,23 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('core', '0013_alter_purchaserequest_phone_alter_vehicle_city_and_more'),
+        ("core", "0013_alter_purchaserequest_phone_alter_vehicle_city_and_more"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='purchaserequest',
-            name='phone',
-            field=common.models.fields.PhoneField(max_length=15, validators=[common.models.fields.validate_phone, common.models.fields.validate_phone], verbose_name='Телефон'),
+            model_name="purchaserequest",
+            name="phone",
+            field=common.models.fields.PhoneField(
+                max_length=15,
+                validators=[common.models.fields.validate_phone, common.models.fields.validate_phone],
+                verbose_name="Телефон",
+            ),
         ),
         migrations.AlterField(
-            model_name='vehicle',
-            name='year',
-            field=models.PositiveSmallIntegerField(blank=True, db_index=True, null=True, verbose_name='Год выпуска'),
+            model_name="vehicle",
+            name="year",
+            field=models.PositiveSmallIntegerField(blank=True, db_index=True, null=True, verbose_name="Год выпуска"),
         ),
     ]

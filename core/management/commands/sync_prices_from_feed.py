@@ -45,12 +45,10 @@ class Command(BaseCommand):
         except Exception as e:
             self.stderr.write(self.style.ERROR(f"Ошибка при загрузке фида: {e}"))
             logger.exception("Ошибка sync_prices_from_feed")
-            raise SystemExit(1)
+            raise SystemExit(1) from None
 
         self.stdout.write(
             self.style.SUCCESS(
-                f"Готово: обновлено={result['updated']}, "
-                f"пропущено={result['skipped']}, "
-                f"ошибок={result['errors']}"
+                f"Готово: обновлено={result['updated']}, пропущено={result['skipped']}, ошибок={result['errors']}"
             )
         )

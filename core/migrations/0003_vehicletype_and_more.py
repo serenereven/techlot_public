@@ -40,7 +40,6 @@ def backwards_copy_vehicle_type(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("core", "0002_alter_purchaserequest_phone_alter_vehicle_mileage_km_and_more"),
     ]
@@ -59,13 +58,11 @@ class Migration(migrations.Migration):
                 "ordering": ("name",),
             },
         ),
-
         migrations.RenameIndex(
             model_name="vehicle",
             new_name="core_vehicl_vehicle_38a2a5_idx",
             old_name="core_vehicl_vehicle_dfecc7_idx",
         ),
-
         migrations.AlterField(
             model_name="purchaserequest",
             name="phone",
@@ -75,9 +72,7 @@ class Migration(migrations.Migration):
                 verbose_name="Телефон",
             ),
         ),
-
         # ✅ Вместо AlterField на vehicle_type делаем перенос через новое поле
-
         migrations.AddField(
             model_name="vehicle",
             name="vehicle_type_fk",
@@ -90,14 +85,11 @@ class Migration(migrations.Migration):
                 blank=True,
             ),
         ),
-
         migrations.RunPython(forwards_copy_vehicle_type, backwards_copy_vehicle_type),
-
         migrations.RemoveField(
             model_name="vehicle",
             name="vehicle_type",
         ),
-
         migrations.RenameField(
             model_name="vehicle",
             old_name="vehicle_type_fk",

@@ -5,20 +5,23 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('core', '0009_purchaserequest_bitrix_error_and_more'),
+        ("core", "0009_purchaserequest_bitrix_error_and_more"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='vehicletype',
-            name='image',
-            field=models.ImageField(blank=True, upload_to='vehicles_types/', verbose_name='Изображение'),
+            model_name="vehicletype",
+            name="image",
+            field=models.ImageField(blank=True, upload_to="vehicles_types/", verbose_name="Изображение"),
         ),
         migrations.AlterField(
-            model_name='purchaserequest',
-            name='phone',
-            field=common.models.fields.PhoneField(max_length=16, validators=[common.models.fields.validate_phone, common.models.fields.validate_phone], verbose_name='Телефон'),
+            model_name="purchaserequest",
+            name="phone",
+            field=common.models.fields.PhoneField(
+                max_length=16,
+                validators=[common.models.fields.validate_phone, common.models.fields.validate_phone],
+                verbose_name="Телефон",
+            ),
         ),
     ]

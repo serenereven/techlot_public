@@ -1,12 +1,25 @@
 from django.contrib import admin, messages
-from django.db import models, transaction
-from django.utils.html import format_html
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from django.urls import path
 from .admin_forms import VehicleImportForm
 from .import_utils import import_vehicles_xlsx
 from django import forms
-from .models import *
+from .models import (
+    Region,
+    City,
+    Contact,
+    Brand,
+    BasicPage,
+    VehicleModel,
+    Vehicle,
+    VehicleType,
+    VehiclePhoto,
+    EngineType,
+    PurchaseRequest,
+    Transmission,
+    TechnicalCondition,
+    StockStatus,
+)
 from common.admin import (
     UUIDAdminMixin,
     TimeStampedAdminMixin,
@@ -14,11 +27,10 @@ from common.admin import (
     FullContentAdmin,
 )
 
-import pandas as pd
-
 # =========================
 # Справочники
 # =========================
+
 
 @admin.register(Region)
 class RegionAdmin(UUIDAdminMixin, admin.ModelAdmin):
@@ -56,6 +68,7 @@ class VehicleModelAdmin(UUIDAdminMixin, admin.ModelAdmin):
     autocomplete_fields = ("brand",)
     ordering = ("brand__name", "name")
 
+
 @admin.register(EngineType)
 class EngineTypeAdmin(UUIDAdminMixin, admin.ModelAdmin):
     list_display = ("name",)
@@ -84,15 +97,18 @@ class VehicleTypeAdmin(UUIDAdminMixin, admin.ModelAdmin):
     search_fields = ("name",)
     ordering = ("order",)
 
+
 class VehiclePhotoInline(admin.TabularInline):
     model = VehiclePhoto
     extra = 1
     fields = ("image", "is_main", "sort_order", "caption")
     ordering = ("sort_order", "id")
 
+
 # =========================
 # Каталог (FullContentModel)
 # =========================
+
 
 @admin.register(Vehicle)
 class VehicleAdmin(FullContentAdmin):
@@ -100,22 +116,40 @@ class VehicleAdmin(FullContentAdmin):
     list_display = ("title", "vin", "price_rub", "is_published", "to_homepage", "created_at")
     change_list_template = "admin/vehicle_changelist.html"
     list_editable = ("is_published", "to_homepage")
-    autocomplete_fields = ("city", "vehicle_type", "brand", "model", "engine_type", "transmission", "technical_condition")
+    autocomplete_fields = (
+        "city",
+        "vehicle_type",
+        "brand",
+        "model",
+        "engine_type",
+        "transmission",
+        "technical_condition",
+    )
     search_fields = ("title", "vin", "id")
     fieldsets = (
         ("Контент", {"fields": ("title", "slug", "content")}),
         ("Публикация", {"fields": ("is_published", "to_homepage")}),
         ("Локация", {"fields": ("city",)}),
         ("Классификация", {"fields": ("vehicle_type", "brand", "model", "stock_status")}),
-        ("Техническое", {"fields": (
-            "year", "vin", "mileage_km",
-            "engine_type", "engine_power_hp",
-            "transmission", "wheel_formula",
-            "technical_condition", "color"
-        )}),
+        (
+            "Техническое",
+            {
+                "fields": (
+                    "year",
+                    "vin",
+                    "mileage_km",
+                    "engine_type",
+                    "engine_power_hp",
+                    "transmission",
+                    "wheel_formula",
+                    "technical_condition",
+                    "color",
+                )
+            },
+        ),
         ("Цена", {"fields": ("price_rub",)}),
         (
-            "SEO",  
+            "SEO",
             {
                 "fields": ("meta_title", "meta_description", "meta_keywords", "og_title", "og_description"),
                 "classes": ("collapse",),
@@ -140,7 +174,7 @@ class VehicleAdmin(FullContentAdmin):
             )
         ]
         return custom_urls + urls
-        
+
     def import_xlsx(self, request):
         if request.method == "POST":
             form = VehicleImportForm(request.POST, request.FILES)
@@ -208,6 +242,7 @@ class VehicleAdmin(FullContentAdmin):
 # Заявки
 # =========================
 
+
 @admin.register(PurchaseRequest)
 class PurchaseRequestAdmin(UUIDAdminMixin, TimeStampedAdminMixin, admin.ModelAdmin):
     list_display = ("created_at", "source", "name", "phone", "vehicle")
@@ -220,6 +255,7 @@ class PurchaseRequestAdmin(UUIDAdminMixin, TimeStampedAdminMixin, admin.ModelAdm
 # =========================
 # Контакты
 # =========================
+
 
 @admin.register(Contact)
 class ContactAdmin(UUIDAdminMixin, TimeStampedAdminMixin, PublishableAdminMixin, admin.ModelAdmin):
@@ -258,6 +294,7 @@ class ContactAdmin(UUIDAdminMixin, TimeStampedAdminMixin, PublishableAdminMixin,
 # Простые страницы (FullContentModel)
 # =========================
 
+
 @admin.register(BasicPage)
 class BasicPageAdmin(FullContentAdmin):
     list_display = ("title", "is_navbar", "is_published", "created_at")
@@ -266,7 +303,7 @@ class BasicPageAdmin(FullContentAdmin):
 
     fieldsets = (
         ("Контент", {"fields": ("title", "slug", "content")}),
-        ("Публикация", {"fields": ("is_published","is_navbar")}),
+        ("Публикация", {"fields": ("is_published", "is_navbar")}),
         (
             "SEO",
             {

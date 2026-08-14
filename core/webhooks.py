@@ -18,6 +18,7 @@ TRACKED_EVENTS = {
     "ONCATALOGPRODUCTUPDATE",
 }
 
+
 @csrf_exempt
 def bitrix_catalog_webhook(request):
     """
@@ -46,10 +47,7 @@ def bitrix_catalog_webhook(request):
         return JsonResponse({"ok": True})
 
     # События товаров
-    product_id_raw = (
-        request.POST.get("data[FIELDS][ID]")
-        or request.POST.get("data[FIELDS][PRODUCT_ID]")
-    )
+    product_id_raw = request.POST.get("data[FIELDS][ID]") or request.POST.get("data[FIELDS][PRODUCT_ID]")
 
     if not product_id_raw:
         logger.warning("bitrix_webhook: нет product_id в событии %s", event)
@@ -72,7 +70,8 @@ def bitrix_catalog_webhook(request):
     if not cache.add(dedup_key, "1", timeout=ttl):
         logger.info(
             "bitrix_webhook: дубль события %s product_id=%s, пропускаем",
-            event, product_id,
+            event,
+            product_id,
         )
         return JsonResponse({"ok": True, "dedup": True})
 
@@ -80,53 +79,39 @@ def bitrix_catalog_webhook(request):
 
     logger.info(
         "bitrix_webhook: %s product_id=%s → задача в очереди",
-        event, product_id,
+        event,
+        product_id,
     )
     return JsonResponse({"ok": True})
 
-#---------------------------------------------------------------
+
+# ---------------------------------------------------------------
 # Helpers
-#---------------------------------------------------------------
+# ---------------------------------------------------------------
+
 
 def _bind_catalog_events(access_token: str, domain: str) -> None:
-    """
-    Подписывает вебхук на события каталога Bitrix24.
-    
-    URL обработчика берётся из настроек Django (BITRIX_WEBHOOK_HANDLER_URL).
-    Токен для проверки запроса хранится в BITRIX_CATALOG_SECRET.
-    """
-    from django.conf import settings
-    
-    handler_url = getattr(
-        settings, 
-        "BITRIX_WEBHOOK_HANDLER_URL", 
-        "https://example.com/webhooks/bitrix/catalog/"
-    )
-    # Добавляем секретный токен для проверки подлинности запроса
-    if hasattr(settings, "BITRIX_CATALOG_SECRET") and settings.BITRIX_CATALOG_SECRET:
-        handler_url = f"{handler_url}{settings.BITRIX_CATALOG_SECRET}/"
-    
-    old_handler_url = getattr(settings, "BITRIX_OLD_HANDLER_URL", None)
+    handler_url = "https://techlot.ru/webhooks/bitrix/catalog/e608dd3fdbee717ca984a5f222eaddba/"
+    old_handler_url = "https://techlot.ru/webhooks/bitrix/catalog//"
 
     for event in ("CATALOG.PRODUCT.ON.ADD", "CATALOG.PRODUCT.ON.UPDATE"):
-        # Сначала удаляем старую подписку (если указан старый URL)
-        if old_handler_url:
-            try:
-                resp = req.post(
-                    f"https://{domain}/rest/event.unbind",
-                    json={"event": event, "handler": old_handler_url, "auth": access_token},
-                    timeout=getattr(settings, "BITRIX_TIMEOUT", 10),
-                )
-                logger.info("event.unbind %s: %s", event, resp.json())
-            except Exception as e:
-                logger.error("event.unbind %s: %s", event, e)
+        # Сначала удаляем старую подписку
+        try:
+            resp = req.post(
+                f"https://{domain}/rest/event.unbind",
+                json={"event": event, "handler": old_handler_url, "auth": access_token},
+                timeout=10,
+            )
+            logger.info("event.unbind %s: %s", event, resp.json())
+        except Exception as e:
+            logger.error("event.unbind %s: %s", event, e)
 
         # Создаём новую подписку
         try:
             resp = req.post(
                 f"https://{domain}/rest/event.bind",
                 json={"event": event, "handler": handler_url, "auth": access_token},
-                timeout=getattr(settings, "BITRIX_TIMEOUT", 10),
+                timeout=10,
             )
             data = resp.json()
             if data.get("result"):
@@ -135,6 +120,7 @@ def _bind_catalog_events(access_token: str, domain: str) -> None:
                 logger.error("event.bind %s: %s", event, data)
         except Exception as e:
             logger.error("event.bind %s: %s", event, e)
+
 
 def _get_ip(request) -> str:
     forwarded = request.META.get("HTTP_X_FORWARDED_FOR")

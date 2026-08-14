@@ -1,5 +1,4 @@
-from django.db.models import Q
-from django.utils import timezone
+# from django.db.models import Q
 from django.utils.decorators import method_decorator
 from django.http import JsonResponse, HttpResponse, HttpResponseForbidden, Http404
 from django.core.paginator import Paginator
@@ -9,8 +8,8 @@ from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.cache import cache_page
 from django.core.cache import cache
 from django.template.loader import render_to_string
-from .filters import VehicleFilter, get_clean_queryset
-from .models import Vehicle, Brand, City, Contact, ContactType, VehicleModel, VehicleType, BasicPage, StockStatus
+from .filters import VehicleFilter, get_clean_queryset, get_available_vehicle_types
+from .models import Vehicle, Brand, City, VehicleModel, VehicleType, BasicPage, StockStatus
 from .forms import PurchaseRequestForm
 
 from core.services.bitrix.lead import BitrixLeadService
@@ -19,7 +18,7 @@ from core.services.bitrix.exceptions import BitrixError
 from .export_utils import (
     get_cached_export_data,
     get_export_filename,
-    clear_export_cache
+    # clear_export_cache
 )
 
 
@@ -32,9 +31,7 @@ def default_catalog_queryset():
     Сортировка по умолчанию: по категории, затем по дате.
     Применяется пока пользователь не выбрал свою сортировку.
     """
-    return Vehicle.published.alive().order_by(
-        "vehicle_type__name", "-to_homepage", "-created_at"
-    )
+    return Vehicle.published.alive().order_by("vehicle_type__name", "-to_homepage", "-created_at")
 
 
 class IndexView(TemplateView):
@@ -79,7 +76,7 @@ class VehicleListView(ListView):
         ctx = super().get_context_data(**kwargs)
         ctx["filter"] = self.filterset
         ctx["filter_form"] = self.filterset.form
-        ctx["vehicle_types"] = VehicleType.objects.all().order_by("order")
+        ctx["vehicle_types"] = get_available_vehicle_types()
         ctx["stock_statuses"] = StockStatus.choices
 
         ctx["all_brands"] = get_clean_queryset(Brand).order_by("name")
@@ -118,13 +115,15 @@ class VehicleAjaxListView(View):
         items_html = render_to_string("core/partials/vehicle_grid.html", context, request=request)
         pagination_html = render_to_string("core/partials/vehicle_pagination.html", context, request=request)
 
-        return JsonResponse({
-            "items_html": items_html,
-            "pagination_html": pagination_html,
-            "total": paginator.count,
-            "has_more": page_obj.has_next(),      # для infinite scroll
-            "next_page": page_number + 1 if page_obj.has_next() else None,
-        })
+        return JsonResponse(
+            {
+                "items_html": items_html,
+                "pagination_html": pagination_html,
+                "total": paginator.count,
+                "has_more": page_obj.has_next(),  # для infinite scroll
+                "next_page": page_number + 1 if page_obj.has_next() else None,
+            }
+        )
 
 
 @require_GET
@@ -205,14 +204,15 @@ class AboutPageDetailView(DetailView):
         """
         if queryset is None:
             queryset = self.get_queryset()
-        
+
         try:
             # Получаем первый объект из отфильтрованного queryset
             obj = queryset.get()
-        except queryset.model.DoesNotExist:
-            raise Http404("Страница не найдена")
-        
+        except queryset.model.DoesNotExist as e:
+            raise Http404("Страница не найдена") from e
+
         return obj
+
 
 @require_POST
 @csrf_protect
@@ -227,17 +227,11 @@ def purchase_request_ajax(request):
         if vehicle_id:
             vehicle = Vehicle.published.alive().filter(pk=vehicle_id).first()
             if not vehicle:
-                return JsonResponse(
-                    {"ok": False, "errors": {"vehicle_id": ["Автомобиль не найден"]}},
-                    status=400
-                )
+                return JsonResponse({"ok": False, "errors": {"vehicle_id": ["Автомобиль не найден"]}}, status=400)
         elif vehicle_slug:
             vehicle = Vehicle.published.alive().filter(slug=vehicle_slug).first()
             if not vehicle:
-                return JsonResponse(
-                    {"ok": False, "errors": {"vehicle_slug": ["Автомобиль не найден"]}},
-                    status=400
-                )
+                return JsonResponse({"ok": False, "errors": {"vehicle_slug": ["Автомобиль не найден"]}}, status=400)
 
         if not form.is_valid():
             return JsonResponse({"ok": False, "errors": form.errors}, status=400)
@@ -262,6 +256,7 @@ def purchase_request_ajax(request):
 
     except Exception:
         import traceback
+
         traceback.print_exc()
         return JsonResponse(
             {"ok": False, "errors": {"__all__": ["Внутренняя ошибка сервера"]}},
@@ -283,8 +278,7 @@ def export_vehicles_vin_excel(request):
     excel_data = get_cached_export_data(request)
 
     response = HttpResponse(
-        excel_data,
-        content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        excel_data, content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
     response["Content-Disposition"] = f"attachment; filename={get_export_filename()}"
     return response

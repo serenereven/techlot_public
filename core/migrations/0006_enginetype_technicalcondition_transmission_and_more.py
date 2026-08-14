@@ -63,7 +63,6 @@ def backwards(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("core", "0005_alter_purchaserequest_phone_and_more"),
     ]
@@ -105,7 +104,6 @@ class Migration(migrations.Migration):
                 "ordering": ("name",),
             },
         ),
-
         # Оставляем вашу правку phone как есть
         migrations.AlterField(
             model_name="purchaserequest",
@@ -116,7 +114,6 @@ class Migration(migrations.Migration):
                 verbose_name="Телефон",
             ),
         ),
-
         # 1) Добавляем новые FK-поля (временные имена)
         migrations.AddField(
             model_name="vehicle",
@@ -154,15 +151,12 @@ class Migration(migrations.Migration):
                 verbose_name="Техническое состояние",
             ),
         ),
-
         # 2) Переносим данные из старых строковых полей в справочники + FK
         migrations.RunPython(forwards, backwards),
-
         # 3) Удаляем старые строковые поля
         migrations.RemoveField(model_name="vehicle", name="engine_type"),
         migrations.RemoveField(model_name="vehicle", name="transmission"),
         migrations.RemoveField(model_name="vehicle", name="technical_condition"),
-
         # 4) Переименовываем новые FK-поля в “красивые” имена
         migrations.RenameField(model_name="vehicle", old_name="engine_type_fk", new_name="engine_type"),
         migrations.RenameField(model_name="vehicle", old_name="transmission_fk", new_name="transmission"),

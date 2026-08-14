@@ -5,20 +5,25 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('core', '0004_remove_vehicle_main_photo_and_more'),
+        ("core", "0004_remove_vehicle_main_photo_and_more"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='purchaserequest',
-            name='phone',
-            field=common.models.fields.PhoneField(max_length=16, validators=[common.models.fields.validate_phone, common.models.fields.validate_phone], verbose_name='Телефон'),
+            model_name="purchaserequest",
+            name="phone",
+            field=common.models.fields.PhoneField(
+                max_length=16,
+                validators=[common.models.fields.validate_phone, common.models.fields.validate_phone],
+                verbose_name="Телефон",
+            ),
         ),
         migrations.AlterField(
-            model_name='vehicle',
-            name='engine_power_hp',
-            field=models.DecimalField(blank=True, decimal_places=3, max_digits=8, null=True, verbose_name='Мощность двигателя, л.с.'),
+            model_name="vehicle",
+            name="engine_power_hp",
+            field=models.DecimalField(
+                blank=True, decimal_places=3, max_digits=8, null=True, verbose_name="Мощность двигателя, л.с."
+            ),
         ),
     ]

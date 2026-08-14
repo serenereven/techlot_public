@@ -1,5 +1,6 @@
 from django import forms
 
+
 class VehicleImportForm(forms.Form):
     file = forms.FileField(label="Excel файл (.xlsx)")
     dry_run = forms.BooleanField(

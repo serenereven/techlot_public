@@ -1,28 +1,35 @@
 PRODUCT_1077 = {
-    "active": "Y", "available": "Y", "bundle": "N",
+    "active": "Y",
+    "available": "Y",
+    "bundle": "N",
     "id": 1077,
     "name": "Автомобиль легковой GWM TANK 300 LGWFF7A57RJ648638",
     "previewText": "Автомобиль легковой GWM TANK 300 LGWFF7A57RJ648638",
     "detailText": None,
     "property45": None,
-    "property107": {"value": "97",    "valueEnum": "Легковые",    "valueId": "2555"},
-    "property109": {"value": "LGWFF7A57RJ648638",                 "valueId": "2445"},
+    "property107": {"value": "97", "valueEnum": "Легковые", "valueId": "2555"},
+    "property109": {"value": "LGWFF7A57RJ648638", "valueId": "2445"},
     "property111": "N",
     "property113": "Y",
     "property115": "N",
-    "property117": {"value": "123",   "valueEnum": "В наличии",   "valueId": "2559"},
-    "property119": {"value": "145",   "valueEnum": "Солнечногорский р-н, п. 2-ая Смирновка, Ленинградское шоссе, 71 км. (Московская область)", "valueId": "2561"},
-    "property123": {"value": "207",   "valueEnum": None,           "valueId": "2563"},  # GWM
+    "property117": {"value": "123", "valueEnum": "В наличии", "valueId": "2559"},
+    "property119": {
+        "value": "145",
+        "valueEnum": "Солнечногорский р-н, п. 2-ая Смирновка, Ленинградское шоссе, 71 км. (Московская область)",
+        "valueId": "2561",
+    },
+    "property123": {"value": "207", "valueEnum": "GWM", "valueId": "2563"},
     "property125": "Y",
-    "property127": {"value": "30088",                              "valueId": "2505"},
-    "property129": None, "property131": None, "property133": None,
+    "property127": {"value": "30088", "valueId": "2505"},
+    "property129": None,
+    "property131": None,
+    "property133": None,
     "property135": None,
-    "property137": {"value": "149",   "valueEnum": "Хорошее",     "valueId": "2567"},
-    "property139": {"value": "Белый",                              "valueId": "2509"},
-    "property141": {"value": "GWM TANK 300",                     "valueId": "2565"},
-    "property143": {"value": "2023",                               "valueId": "2600"},
+    "property137": {"value": "149", "valueEnum": "Хорошее", "valueId": "2567"},
+    "property139": {"value": "Белый", "valueId": "2509"},
+    "property141": {"value": "GWM TANK 300", "valueId": "2565"},
+    "property143": {"value": "2023", "valueId": "2600"},
 }
 
 PRICE_1077 = "3647000"
-
 BRAND_ENUMS = {"207": "GWM"}

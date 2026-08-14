@@ -5,25 +5,28 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('core', '0008_vehicle_maps_code_alter_brand_name_alter_city_name_and_more'),
+        ("core", "0008_vehicle_maps_code_alter_brand_name_alter_city_name_and_more"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='purchaserequest',
-            name='bitrix_error',
+            model_name="purchaserequest",
+            name="bitrix_error",
             field=models.TextField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='purchaserequest',
-            name='bitrix_sent',
+            model_name="purchaserequest",
+            name="bitrix_sent",
             field=models.BooleanField(default=False),
         ),
         migrations.AlterField(
-            model_name='purchaserequest',
-            name='phone',
-            field=common.models.fields.PhoneField(max_length=16, validators=[common.models.fields.validate_phone, common.models.fields.validate_phone], verbose_name='Телефон'),
+            model_name="purchaserequest",
+            name="phone",
+            field=common.models.fields.PhoneField(
+                max_length=16,
+                validators=[common.models.fields.validate_phone, common.models.fields.validate_phone],
+                verbose_name="Телефон",
+            ),
         ),
     ]

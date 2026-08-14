@@ -5,30 +5,42 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('core', '0001_initial'),
+        ("core", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='purchaserequest',
-            name='phone',
-            field=common.models.fields.PhoneField(max_length=16, validators=[common.models.fields.validate_phone, common.models.fields.validate_phone], verbose_name='Телефон'),
+            model_name="purchaserequest",
+            name="phone",
+            field=common.models.fields.PhoneField(
+                max_length=16,
+                validators=[common.models.fields.validate_phone, common.models.fields.validate_phone],
+                verbose_name="Телефон",
+            ),
         ),
         migrations.AlterField(
-            model_name='vehicle',
-            name='mileage_km',
-            field=models.PositiveIntegerField(blank=True, default=0, verbose_name='Пробег, км'),
+            model_name="vehicle",
+            name="mileage_km",
+            field=models.PositiveIntegerField(blank=True, default=0, verbose_name="Пробег, км"),
         ),
         migrations.AlterField(
-            model_name='vehicle',
-            name='price_rub',
-            field=models.DecimalField(blank=True, db_index=True, decimal_places=0, max_digits=12, verbose_name='Стоимость, ₽'),
+            model_name="vehicle",
+            name="price_rub",
+            field=models.DecimalField(
+                blank=True, db_index=True, decimal_places=0, max_digits=12, verbose_name="Стоимость, ₽"
+            ),
         ),
         migrations.AlterField(
-            model_name='vehicle',
-            name='stock_status',
-            field=models.CharField(blank=True, choices=[('in_stock', 'В наличии'), ('reserved', 'В резерве'), ('sold', 'Продано')], db_index=True, default='in_stock', max_length=20, verbose_name='Статус'),
+            model_name="vehicle",
+            name="stock_status",
+            field=models.CharField(
+                blank=True,
+                choices=[("in_stock", "В наличии"), ("reserved", "В резерве"), ("sold", "Продано")],
+                db_index=True,
+                default="in_stock",
+                max_length=20,
+                verbose_name="Статус",
+            ),
         ),
     ]

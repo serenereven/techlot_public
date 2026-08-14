@@ -1,0 +1,25 @@
+line-length = 120
+target-version = "py312"
+
+[lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "B",   # flake8-bugbear
+    "C4",  # flake8-comprehensions
+]
+ignore = [
+    "E501",  # line too long (handled by formatter)
+    "W293",
+    "W292",
+    "W291",
+    "I001",
+]
+
+[lint.per-file-ignores]
+"*/migrations/*.py" = ["E501"]
+"*/tests/*.py" = ["S101"]
+"*/apps.py" = ["F401"]
+"techlot/**/*.py" = ["F401", "F403"]

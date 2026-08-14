@@ -6,25 +6,48 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('core', '0012_alter_vehicle_fk_on_delete'),
+        ("core", "0012_alter_vehicle_fk_on_delete"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='purchaserequest',
-            name='phone',
-            field=common.models.fields.PhoneField(max_length=15, validators=[common.models.fields.validate_phone, common.models.fields.validate_phone], verbose_name='Телефон'),
+            model_name="purchaserequest",
+            name="phone",
+            field=common.models.fields.PhoneField(
+                max_length=15,
+                validators=[common.models.fields.validate_phone, common.models.fields.validate_phone],
+                verbose_name="Телефон",
+            ),
         ),
         migrations.AlterField(
-            model_name='vehicle',
-            name='city',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='vehicles', to='core.city', verbose_name='Город'),
+            model_name="vehicle",
+            name="city",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="vehicles",
+                to="core.city",
+                verbose_name="Город",
+            ),
         ),
         migrations.AlterField(
-            model_name='vehicle',
-            name='stock_status',
-            field=models.CharField(blank=True, choices=[('awaiting', 'В ожидании поступления'), ('in_stock', 'В наличии'), ('reserved', 'В резерве'), ('leasing', 'Продажа в лизинг'), ('sold', 'Продано')], db_index=True, default='in_stock', max_length=20, verbose_name='Статус'),
+            model_name="vehicle",
+            name="stock_status",
+            field=models.CharField(
+                blank=True,
+                choices=[
+                    ("awaiting", "В ожидании поступления"),
+                    ("in_stock", "В наличии"),
+                    ("reserved", "В резерве"),
+                    ("leasing", "Продажа в лизинг"),
+                    ("sold", "Продано"),
+                ],
+                db_index=True,
+                default="in_stock",
+                max_length=20,
+                verbose_name="Статус",
+            ),
         ),
     ]

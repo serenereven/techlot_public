@@ -158,6 +158,7 @@ def log_admin_action(user_id, obj, action_flag, message=""):
         change_message=message,
     )
 
+
 _YEAR_RE = re.compile(r"(19\d{2}|20\d{2}|21\d{2})")
 _NUM_RE = re.compile(r"[^\d,.\-]+")
 
@@ -238,9 +239,7 @@ def import_vehicles_xlsx(
     preview = []
 
     vins = [
-        normalize(get_col(row, columns, "VIN"))
-        for _, row in df.iterrows()
-        if normalize(get_col(row, columns, "VIN"))
+        normalize(get_col(row, columns, "VIN")) for _, row in df.iterrows() if normalize(get_col(row, columns, "VIN"))
     ]
     existing_by_vin = {v.vin: v for v in Vehicle.objects.filter(vin__in=set(vins))} if vins else {}
 
@@ -249,7 +248,6 @@ def import_vehicles_xlsx(
     try:
         with transaction.atomic():
             for _, row in df.iterrows():
-
                 vin = normalize(get_col(row, columns, "VIN"))
                 if not vin:
                     skipped += 1

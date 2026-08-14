@@ -1,11 +1,10 @@
 from django import forms
 from .models import PurchaseRequest, RequestType
-from .models import VehicleType, Brand, VehicleModel, City, StockStatus
+from .models import VehicleType, StockStatus
 import re
 
 
 class PurchaseRequestForm(forms.ModelForm):
-
     class Meta:
         model = PurchaseRequest
         fields = [
@@ -46,21 +45,17 @@ class VehicleFilterForm(forms.Form):
     city = forms.UUIDField(required=False)
 
     year_min = forms.IntegerField(
-        required=False, min_value=1900,
-        widget=forms.NumberInput(attrs={"class": "uk-input", "placeholder": "Год от"})
+        required=False, min_value=1900, widget=forms.NumberInput(attrs={"class": "uk-input", "placeholder": "Год от"})
     )
     year_max = forms.IntegerField(
-        required=False, min_value=1900,
-        widget=forms.NumberInput(attrs={"class": "uk-input", "placeholder": "Год до"})
+        required=False, min_value=1900, widget=forms.NumberInput(attrs={"class": "uk-input", "placeholder": "Год до"})
     )
 
     price_min = forms.IntegerField(
-        required=False, min_value=0,
-        widget=forms.NumberInput(attrs={"class": "uk-input", "placeholder": "Цена от, ₽"})
+        required=False, min_value=0, widget=forms.NumberInput(attrs={"class": "uk-input", "placeholder": "Цена от, ₽"})
     )
     price_max = forms.IntegerField(
-        required=False, min_value=0,
-        widget=forms.NumberInput(attrs={"class": "uk-input", "placeholder": "Цена до, ₽"})
+        required=False, min_value=0, widget=forms.NumberInput(attrs={"class": "uk-input", "placeholder": "Цена до, ₽"})
     )
 
     status = forms.ChoiceField(

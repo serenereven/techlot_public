@@ -7,9 +7,11 @@ from .views import (
     VehicleDetailView,
     BasicPageDetailView,
     AboutPageDetailView,
-    api_brands, api_models, api_cities,
+    api_brands,
+    api_models,
+    api_cities,
     purchase_request_ajax,
-    export_vehicles_vin_excel
+    export_vehicles_vin_excel,
 )
 from .webhooks import bitrix_catalog_webhook
 
@@ -24,15 +26,12 @@ urlpatterns = [
     path("ajax/purchase-request/", purchase_request_ajax, name="purchase_request_ajax"),
     path("about/", AboutPageDetailView.as_view(), name="about_page"),
     path("<slug:slug>/", BasicPageDetailView.as_view(), name="basic_page"),
-
     path("api/brands/", api_brands, name="api_brands"),
     path("api/models/", api_models, name="api_models"),
     path("api/cities/", api_cities, name="api_cities"),
-
-    path('export/vehicles-vin-excel/', export_vehicles_vin_excel, name='export_vehicles_vin_excel'),
-
+    path("export/vehicles-vin-excel/", export_vehicles_vin_excel, name="export_vehicles_vin_excel"),
     path(
-        f"webhooks/bitrix/catalog/e608dd3fdbee717ca984a5f222eaddba/",
+        "webhooks/bitrix/catalog/e608dd3fdbee717ca984a5f222eaddba/",
         bitrix_catalog_webhook,
         name="bitrix_catalog_webhook",
     ),

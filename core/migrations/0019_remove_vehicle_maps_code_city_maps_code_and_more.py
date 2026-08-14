@@ -5,24 +5,27 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('core', '0018_alter_purchaserequest_phone'),
+        ("core", "0018_alter_purchaserequest_phone"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='vehicle',
-            name='maps_code',
+            model_name="vehicle",
+            name="maps_code",
         ),
         migrations.AddField(
-            model_name='city',
-            name='maps_code',
-            field=models.TextField(blank=True, db_index=True, null=True, verbose_name='Код карты'),
+            model_name="city",
+            name="maps_code",
+            field=models.TextField(blank=True, db_index=True, null=True, verbose_name="Код карты"),
         ),
         migrations.AlterField(
-            model_name='purchaserequest',
-            name='phone',
-            field=common.models.fields.PhoneField(max_length=15, validators=[common.models.fields.validate_phone, common.models.fields.validate_phone], verbose_name='Телефон'),
+            model_name="purchaserequest",
+            name="phone",
+            field=common.models.fields.PhoneField(
+                max_length=15,
+                validators=[common.models.fields.validate_phone, common.models.fields.validate_phone],
+                verbose_name="Телефон",
+            ),
         ),
     ]

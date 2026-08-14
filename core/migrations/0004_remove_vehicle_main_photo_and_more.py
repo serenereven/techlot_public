@@ -6,62 +6,100 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('core', '0003_vehicletype_and_more'),
+        ("core", "0003_vehicletype_and_more"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='vehicle',
-            name='main_photo',
+            model_name="vehicle",
+            name="main_photo",
         ),
         migrations.AlterField(
-            model_name='purchaserequest',
-            name='phone',
-            field=common.models.fields.PhoneField(max_length=16, validators=[common.models.fields.validate_phone, common.models.fields.validate_phone], verbose_name='Телефон'),
+            model_name="purchaserequest",
+            name="phone",
+            field=common.models.fields.PhoneField(
+                max_length=16,
+                validators=[common.models.fields.validate_phone, common.models.fields.validate_phone],
+                verbose_name="Телефон",
+            ),
         ),
         migrations.AlterField(
-            model_name='vehicle',
-            name='brand',
-            field=models.ForeignKey(blank=True, on_delete=django.db.models.deletion.PROTECT, related_name='vehicles', to='core.brand', verbose_name='Марка'),
+            model_name="vehicle",
+            name="brand",
+            field=models.ForeignKey(
+                blank=True,
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="vehicles",
+                to="core.brand",
+                verbose_name="Марка",
+            ),
         ),
         migrations.AlterField(
-            model_name='vehicle',
-            name='city',
-            field=models.ForeignKey(blank=True, on_delete=django.db.models.deletion.PROTECT, related_name='vehicles', to='core.city', verbose_name='Город'),
+            model_name="vehicle",
+            name="city",
+            field=models.ForeignKey(
+                blank=True,
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="vehicles",
+                to="core.city",
+                verbose_name="Город",
+            ),
         ),
         migrations.AlterField(
-            model_name='vehicle',
-            name='model',
-            field=models.ForeignKey(blank=True, on_delete=django.db.models.deletion.PROTECT, related_name='vehicles', to='core.vehiclemodel', verbose_name='Модель'),
+            model_name="vehicle",
+            name="model",
+            field=models.ForeignKey(
+                blank=True,
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="vehicles",
+                to="core.vehiclemodel",
+                verbose_name="Модель",
+            ),
         ),
         migrations.AlterField(
-            model_name='vehicle',
-            name='vehicle_type',
-            field=models.ForeignKey(blank=True, on_delete=django.db.models.deletion.PROTECT, related_name='vehicles', to='core.vehicletype', verbose_name='Тип техники'),
+            model_name="vehicle",
+            name="vehicle_type",
+            field=models.ForeignKey(
+                blank=True,
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="vehicles",
+                to="core.vehicletype",
+                verbose_name="Тип техники",
+            ),
         ),
         migrations.AlterField(
-            model_name='vehicle',
-            name='year',
-            field=models.PositiveSmallIntegerField(blank=True, db_index=True, verbose_name='Год выпуска'),
+            model_name="vehicle",
+            name="year",
+            field=models.PositiveSmallIntegerField(blank=True, db_index=True, verbose_name="Год выпуска"),
         ),
         migrations.CreateModel(
-            name='VehiclePhoto',
+            name="VehiclePhoto",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('image', models.ImageField(upload_to='vehicles/photos/', verbose_name='Фото')),
-                ('caption', models.CharField(blank=True, max_length=120, verbose_name='Подпись')),
-                ('sort_order', models.PositiveSmallIntegerField(db_index=True, default=0, verbose_name='Порядок')),
-                ('is_main', models.BooleanField(db_index=True, default=False, verbose_name='Главное')),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('vehicle', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='photos', to='core.vehicle', verbose_name='Техника')),
+                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                ("image", models.ImageField(upload_to="vehicles/photos/", verbose_name="Фото")),
+                ("caption", models.CharField(blank=True, max_length=120, verbose_name="Подпись")),
+                ("sort_order", models.PositiveSmallIntegerField(db_index=True, default=0, verbose_name="Порядок")),
+                ("is_main", models.BooleanField(db_index=True, default=False, verbose_name="Главное")),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                (
+                    "vehicle",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="photos",
+                        to="core.vehicle",
+                        verbose_name="Техника",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Фото техники',
-                'verbose_name_plural': 'Фото техники',
-                'ordering': ('sort_order', 'created_at'),
-                'indexes': [models.Index(fields=['vehicle', 'is_main'], name='core_vehicl_vehicle_bd8fad_idx'), models.Index(fields=['vehicle', 'sort_order'], name='core_vehicl_vehicle_c94d5a_idx')],
+                "verbose_name": "Фото техники",
+                "verbose_name_plural": "Фото техники",
+                "ordering": ("sort_order", "created_at"),
+                "indexes": [
+                    models.Index(fields=["vehicle", "is_main"], name="core_vehicl_vehicle_bd8fad_idx"),
+                    models.Index(fields=["vehicle", "sort_order"], name="core_vehicl_vehicle_c94d5a_idx"),
+                ],
             },
         ),
     ]

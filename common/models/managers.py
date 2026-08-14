@@ -18,30 +18,39 @@ class SoftDeletePublishQuerySet(models.QuerySet):
         # если нужно — тоже только из alive
         return self.filter(is_published=False)
 
+
 BaseSoftDeletePublishManager = models.Manager.from_queryset(SoftDeletePublishQuerySet)
+
 
 class SoftDeleteAllManager(BaseSoftDeletePublishManager):
     """Все записи (включая удаленные)"""
+
     pass
 
 
 class SoftDeleteAliveManager(BaseSoftDeletePublishManager):
     """Только не удаленные (по умолчанию)"""
+
     def get_queryset(self):
         return super().get_queryset().alive()
 
 
 class SoftDeleteDeletedManager(BaseSoftDeletePublishManager):
     """Только удаленные"""
+
     def get_queryset(self):
         return super().get_queryset().deleted()
 
+
 class PublishedManager(BaseSoftDeletePublishManager):
     """Только опубликованные (по умолчанию alive)"""
+
     def get_queryset(self):
         return super().get_queryset().published()
 
+
 class DraftsManager(BaseSoftDeletePublishManager):
     """Только черновики (по умолчанию alive)"""
+
     def get_queryset(self):
         return super().get_queryset().drafts()

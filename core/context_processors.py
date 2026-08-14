@@ -5,6 +5,7 @@ from core.models import Contact, BasicPage, ContactType
 CACHE_KEY = "global_header_footer:v1"
 CACHE_TTL = 60 * 10  # 10 минут
 
+
 def global_header_footer(request):
     data = cache.get(CACHE_KEY)
     if data:

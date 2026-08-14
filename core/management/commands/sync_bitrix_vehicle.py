@@ -37,8 +37,7 @@ class Command(BaseCommand):
         try:
             product = client.get_product(product_id)
         except Exception as e:
-            raise CommandError(f"Ошибка получения товара: {e}")
-
+            raise CommandError(f"Ошибка получения товара: {e}") from e
         if not product:
             raise CommandError("Bitrix вернул пустой ответ")
 
@@ -75,7 +74,8 @@ class Command(BaseCommand):
         if vehicle is None:
             self.stdout.write(self.style.WARNING("sync_vehicle вернул None — товар пропущен"))
         else:
-            self.stdout.write(self.style.SUCCESS(
-                f"✓ Vehicle сохранён: pk={vehicle.pk}, slug={vehicle.slug}, "
-                f"фото={vehicle.photos.count()}"
-            ))
+            self.stdout.write(
+                self.style.SUCCESS(
+                    f"✓ Vehicle сохранён: pk={vehicle.pk}, slug={vehicle.slug}, фото={vehicle.photos.count()}"
+                )
+            )

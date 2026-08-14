@@ -1,12 +1,17 @@
 import logging
 
 from celery import shared_task
-from celery.schedules import crontab
+# from celery.schedules import crontab
 
 from core.import_utils import sync_prices_from_feed
 from core.models import Vehicle
 
+from django.db import DataError, IntegrityError
+
 logger = logging.getLogger(__name__)
+
+
+NON_RETRYABLE_EXCEPTIONS = (DataError, IntegrityError, ValueError)
 
 
 @shared_task(
@@ -17,22 +22,30 @@ logger = logging.getLogger(__name__)
     queue="bitrix",
 )
 def sync_vehicle_from_bitrix(self, bitrix_product_id: int) -> str:
-    """Синхронизация одного товара из Bitrix. Запускается из webhook."""
-    logger.info("Task sync_vehicle_from_bitrix: product_id=%s", bitrix_product_id)
+    logger.info("Task sync_vehicle_from_bitrix[%s]: product_id=%s", self.request.id, bitrix_product_id)
 
     try:
         from core.services.bitrix.sync import sync_vehicle
+
         vehicle = sync_vehicle(bitrix_product_id)
+    except NON_RETRYABLE_EXCEPTIONS as exc:
+        logger.error(
+            "Task sync_vehicle_from_bitrix %s: неповторимая ошибка, retry не поможет: %s",
+            bitrix_product_id,
+            exc,
+        )
+        raise
     except Exception as exc:
         logger.exception(
             "Task sync_vehicle_from_bitrix %s: необработанная ошибка: %s",
             bitrix_product_id,
             exc,
         )
-        raise self.retry(exc=exc)
+        raise self.retry(exc=exc) from exc
 
     if vehicle is None:
-        raise self.retry(exc=ValueError(f"sync_vehicle вернул None для product_id={bitrix_product_id}"))
+        logger.warning("Task sync_vehicle_from_bitrix %s: товар пропущен", bitrix_product_id)
+        return f"skipped:{bitrix_product_id}"
 
     return f"synced:{vehicle.pk}"
 
@@ -53,7 +66,9 @@ def sync_prices_sberleasing() -> str:
 
     logger.info(
         "Task sync_prices_sberleasing: обновлено=%d, пропущено=%d, ошибок=%d",
-        result["updated"], result["skipped"], result["errors"],
+        result["updated"],
+        result["skipped"],
+        result["errors"],
     )
     return f"updated={result['updated']} skipped={result['skipped']} errors={result['errors']}"
 
